@@ -23,7 +23,7 @@ Allows you to define the structure of data. Required for validating an object wi
 
 | Name | Type |
 | :------ | :------ |
-| `Schema` | extends `SchemaDefinition` |
+| `Schema` | extends [`SchemaDefinition`](../README.md#schemadefinition) |
 
 #### Parameters
 
@@ -39,39 +39,39 @@ An meta object representing the structure of data.
 
 #### Defined in
 
-[Schema.ts:148](https://github.com/JeremyBankes/schema/blob/d68516d/source/Schema.ts#L148)
+[source/Schema.ts:148](https://github.com/JeremyBankes/schema/blob/37df9cc/source/Schema.ts#L148)
 
 ___
 
 ### validate
 
-▸ `Static` **validate**<`Schema`\>(`data`, `schema`): `Promise`<`Model`<`Schema`\>\>
+▸ `Static` **validate**<`Schema`\>(`data`, `schema`): `Promise`<[`Model`](../README.md#model)<`Schema`\>\>
 
 Ensures that 'data' matches the structure and typing of 'schema'.
 
 **`Throws`**
 
-A SchemaValidationError if 'data' could not be validated as matching 'schema'.
+A [SchemaValidationError](SchemaValidationError.md) if 'data' could not be validated as matching 'schema'.
 
 #### Type parameters
 
 | Name | Type |
 | :------ | :------ |
-| `Schema` | extends `SchemaDefinition` |
+| `Schema` | extends [`SchemaDefinition`](../README.md#schemadefinition) |
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `data` | ``null`` \| `ModelDefinition`<`Schema`\> | The data to be validated. |
+| `data` | ``null`` \| [`ModelDefinition`](../README.md#modeldefinition)<`Schema`\> | The data to be validated. |
 | `schema` | `Schema` | The structure of 'data'. |
 
 #### Returns
 
-`Promise`<`Model`<`Schema`\>\>
+`Promise`<[`Model`](../README.md#model)<`Schema`\>\>
 
 Validated 'data'.
 
 #### Defined in
 
-[Schema.ts:159](https://github.com/JeremyBankes/schema/blob/d68516d/source/Schema.ts#L159)
+[source/Schema.ts:159](https://github.com/JeremyBankes/schema/blob/37df9cc/source/Schema.ts#L159)

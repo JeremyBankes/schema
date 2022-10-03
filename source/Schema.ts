@@ -55,7 +55,7 @@ type ModelItemType<Item extends SchemaItem | SchemaDefinition, IsModelDefinition
 /**
  * Determines if a given {@link SchemaValue} is required when creating a {@link ModelDefinition}.
  */
-export type IsValueRequired<SchemaValue extends SchemaItem | SchemaDefinition> = (
+type IsValueRequired<SchemaValue extends SchemaItem | SchemaDefinition> = (
     SchemaValue extends SchemaItem ? (
         SchemaValue extends { required: true } ? true : false
     ) : (
@@ -72,7 +72,7 @@ export type IsValueRequired<SchemaValue extends SchemaItem | SchemaDefinition> =
 /**
  * Determines if a given {@link SchemaValue} is present when accessing values in a {@link Model}.
  */
-export type IsValuePresent<SchemaValue extends SchemaItem | SchemaDefinition> = (
+type IsValuePresent<SchemaValue extends SchemaItem | SchemaDefinition> = (
     SchemaValue extends SchemaItem ? (
         SchemaValue extends { required: true } ? (
             true
