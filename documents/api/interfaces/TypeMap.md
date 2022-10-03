@@ -27,7 +27,7 @@ Represents a mapping of strings to their corresponding types.
 
 #### Defined in
 
-Schema.ts:7
+[Schema.ts:7](https://github.com/JeremyBankes/schema/blob/d68516d/source/Schema.ts#L7)
 
 ___
 
@@ -37,7 +37,7 @@ ___
 
 #### Defined in
 
-Schema.ts:8
+[Schema.ts:8](https://github.com/JeremyBankes/schema/blob/d68516d/source/Schema.ts#L8)
 
 ___
 
@@ -47,7 +47,7 @@ ___
 
 #### Defined in
 
-Schema.ts:9
+[Schema.ts:9](https://github.com/JeremyBankes/schema/blob/d68516d/source/Schema.ts#L9)
 
 ___
 
@@ -57,7 +57,7 @@ ___
 
 #### Defined in
 
-Schema.ts:10
+[Schema.ts:10](https://github.com/JeremyBankes/schema/blob/d68516d/source/Schema.ts#L10)
 
 ___
 
@@ -67,7 +67,7 @@ ___
 
 #### Defined in
 
-Schema.ts:11
+[Schema.ts:11](https://github.com/JeremyBankes/schema/blob/d68516d/source/Schema.ts#L11)
 
 ___
 
@@ -77,7 +77,7 @@ ___
 
 #### Defined in
 
-Schema.ts:12
+[Schema.ts:12](https://github.com/JeremyBankes/schema/blob/d68516d/source/Schema.ts#L12)
 
 ___
 
@@ -87,7 +87,7 @@ ___
 
 #### Defined in
 
-Schema.ts:13
+[Schema.ts:13](https://github.com/JeremyBankes/schema/blob/d68516d/source/Schema.ts#L13)
 
 ___
 
@@ -97,7 +97,7 @@ ___
 
 #### Defined in
 
-Schema.ts:14
+[Schema.ts:14](https://github.com/JeremyBankes/schema/blob/d68516d/source/Schema.ts#L14)
 
 ___
 
@@ -107,7 +107,7 @@ ___
 
 #### Defined in
 
-Schema.ts:15
+[Schema.ts:15](https://github.com/JeremyBankes/schema/blob/d68516d/source/Schema.ts#L15)
 
 ___
 
@@ -117,4 +117,4 @@ ___
 
 #### Defined in
 
-Schema.ts:16
+[Schema.ts:16](https://github.com/JeremyBankes/schema/blob/d68516d/source/Schema.ts#L16)
