@@ -39,7 +39,7 @@ An meta object representing the structure of data.
 
 #### Defined in
 
-[source/Schema.ts:148](https://github.com/JeremyBankes/schema/blob/37df9cc/source/Schema.ts#L148)
+[source/Schema.ts:148](https://github.com/JeremyBankes/schema/blob/5d7f048/source/Schema.ts#L148)
 
 ___
 
@@ -74,4 +74,4 @@ Validated 'data'.
 
 #### Defined in
 
-[source/Schema.ts:159](https://github.com/JeremyBankes/schema/blob/37df9cc/source/Schema.ts#L159)
+[source/Schema.ts:159](https://github.com/JeremyBankes/schema/blob/5d7f048/source/Schema.ts#L159)

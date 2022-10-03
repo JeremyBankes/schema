@@ -33,7 +33,7 @@ Represents a definition of a schema.
 
 #### Defined in
 
-[source/Schema.ts:22](https://github.com/JeremyBankes/schema/blob/37df9cc/source/Schema.ts#L22)
+[source/Schema.ts:22](https://github.com/JeremyBankes/schema/blob/5d7f048/source/Schema.ts#L22)
 
 ___
 
@@ -51,7 +51,7 @@ Typing for inline data that matches a Definition.
 
 #### Defined in
 
-[source/Schema.ts:96](https://github.com/JeremyBankes/schema/blob/37df9cc/source/Schema.ts#L96)
+[source/Schema.ts:96](https://github.com/JeremyBankes/schema/blob/5d7f048/source/Schema.ts#L96)
 
 ___
 
@@ -69,4 +69,4 @@ Typing for data that has been validated as matching a Definition.
 
 #### Defined in
 
-[source/Schema.ts:104](https://github.com/JeremyBankes/schema/blob/37df9cc/source/Schema.ts#L104)
+[source/Schema.ts:104](https://github.com/JeremyBankes/schema/blob/5d7f048/source/Schema.ts#L104)
