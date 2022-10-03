@@ -3,10 +3,10 @@ A schema module for both runtime _and_ compile-time data structure validation an
 
 This package is particularly useful when you're expecting data to be in a certain format, but are not entirely certain about it until runtime. I.E. requesting information from a web API, reading JSON from a file, or even working with a JavaScript libraries that returns objects without typings.
 
-It allows you to define a Schema once and receive the benefit of type-checking as you develop as well as providing runtime validation that the data you're working with actually matches your defined schema.
+It allows you to define a Schema once and immediately receive the benefit of type-checking as you develop as well as providing runtime validation for the data you're working with.
 
 ## Overview
----
+
 ### Our Example
 In this example, we will create a schema for a "Person" object, and validate some data against this schema.
 
