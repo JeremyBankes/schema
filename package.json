@@ -1,0 +1,34 @@
+{
+    "name": "schema",
+    "version": "1.0.0",
+    "description": "A schema module for compile-time and runtime type checking.",
+    "main": "build/index.js",
+    "type": "module",
+    "scripts": {
+        "setup": "npm i",
+        "build": "cd source && npx tsc",
+        "build:watch": "cd source && npx tsc --watch",
+        "document": "cd source && npx typedoc --plugin typedoc-plugin-markdown index.ts"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/JeremyBankes/schema.git"
+    },
+    "keywords": [
+        "Schema"
+    ],
+    "author": "Jeremy Bankes",
+    "license": "GPL-3.0-or-later",
+    "bugs": {
+        "url": "https://github.com/JeremyBankes/schema/issues"
+    },
+    "homepage": "https://github.com/JeremyBankes/schema#readme",
+    "devDependencies": {
+        "typedoc": "^0.23.15",
+        "typedoc-plugin-markdown": "^3.13.6",
+        "typescript": "^4.8.4"
+    },
+    "dependencies": {
+        "@jeremy-bankes/toolbox": "^1.8.8"
+    }
+}
