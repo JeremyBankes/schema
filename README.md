@@ -51,11 +51,33 @@ const person = await Schema.validate(ambiguousPersonData, PersonSchema);
 We've been returned a `person` object by our validation pass that will have the type `Model<typeof PersonSchema>`. If validation fails, a `SchemaValidationError` will be raised. If not, we can now assume that `person` matches our desired `PersonSchema`, allowing our IDE to assist us with type-checking.
 
 ### Things to Note
-Because all properties in `person.contact` are optional (`required: false` in our `PersonSchema`), `person.contact` itself is optional (Can be `undefined`).
+- **Arrays**: The usage of arrays in `SchemaDefinition`s can be denoted with the use of square brackets (`[]`) around any type you would usually use.
 
-`personalMotto` is also optional, so can be left out in our data to validated (`ambiguousPersonData` in our example). However because it has a `default` value, the property will always be present after validation (never `undefined`). This will be reflected by your IDE's type-checking.
+```typescript
+const MovieSchema = Schema.create({
+    name: {
+        type: "string",
+        required: true
+    },
+    actors: {
+        type: ["string"], // <- Note the square brackets.
+        default: []
+    }
+});
 
-`default` can be set to a desired default value, a function that returns a default value, or a Promise of a default value (therefore an async function as well).
+const movie = await Schema.validate({
+    name: 'Gladiator',
+    actors: ['Russell Crowe', 'Joaquin Phoenix', 'Connie Nielsen']
+}, MovieSchema);
+```
+
+- **Nested Optionality**: Because all properties in `person.contact` are optional (`required: false` in our `PersonSchema`), `person.contact` itself is optional (Can be `undefined`).
+
+- **Accessing Required & Default Fields**: `personalMotto` is also optional, so can be left out in our data to validated (`ambiguousPersonData` in our example). However because it has a `default` value, the property will always be present after validation (never `undefined`). This will be reflected by your IDE's type-checking.
+
+- **Default Value Evaluation**: The `default` property in `SchemaDefinition`s can be set to a desired default value, a function that returns a default value, or a Promise of a default value (therefore an async function as well).
+
+
 
 ### Putting it All Together
 

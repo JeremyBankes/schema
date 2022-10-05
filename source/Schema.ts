@@ -9,11 +9,6 @@ export interface TypeMap {
     'boolean': boolean;
     'Date': Date;
     'any': any;
-    'string[]': string[];
-    'number[]': number[];
-    'boolean[]': boolean[];
-    'Date[]': Date[];
-    'any[]': any[];
 };
 
 /**
@@ -27,7 +22,7 @@ export type SchemaDefinition = {
  * Represents the meta information describing a value held by an object described by a {@link SchemaDefinition}.
  */
 type SchemaItem = {
-    type: keyof TypeMap | SchemaDefinition,
+    type: keyof TypeMap | (keyof TypeMap)[] | SchemaDefinition | SchemaDefinition[],
     required?: boolean,
     default?: any
 };
@@ -37,18 +32,27 @@ type SchemaItem = {
  * Either a type from {@link TypeMap} or a nested {@link Model} (or {@link ModelDefinition}).
  */
 type ModelItemType<Item extends SchemaItem | SchemaDefinition, IsModelDefinition extends boolean> = (
+    Item extends SchemaDefinition ? (
+        // Handle Item is SchemaDefinition, not SchemaItem 
+        IsModelDefinition extends true ? ModelDefinition<Item> : Model<Item>
+    ) :
     Item extends SchemaItem & { type: keyof TypeMap } ? (
+        // Handle type = keyof TypeMap
         TypeMap[Item['type']]
+    ) :
+    Item extends SchemaItem & { type: (keyof TypeMap)[] } ? (
+        // Handle type = (keyof TypeMap)[]
+        TypeMap[Item['type'][0]][]
+    ) :
+    Item extends SchemaItem & { type: SchemaDefinition } ? (
+        // Handle type = SchemaDefinition
+        IsModelDefinition extends true ? ModelDefinition<Item['type']> : Model<Item['type']>
+    ) :
+    Item extends { type: SchemaDefinition[] } ? (
+        // Handle type = SchemaDefinition[]
+        IsModelDefinition extends true ? ModelDefinition<Item['type'][0]>[] : Model<Item['type'][0]>[]
     ) : (
-        Item extends SchemaItem & { type: SchemaDefinition } ? (
-            IsModelDefinition extends true ? ModelDefinition<Item['type']> : Model<Item['type']>
-        ) : (
-            Item extends SchemaDefinition ? (
-                IsModelDefinition extends true ? ModelDefinition<Item> : Model<Item>
-            ) : (
-                never
-            )
-        )
+        never
     )
 );
 
@@ -160,17 +164,6 @@ export class Schema {
         if (typeof data !== 'object' || data === null) {
             throw new SchemaValidationError(`Invalid data "${data}". Cannot apply schema.`, null, data);
         }
-        const ensureType = async (itemSchema: SchemaItem, dataValue: any, path: string) => {
-            if (typeof itemSchema.type === 'string') {
-                if (!Schema._isTypeMatch(Schema._getTypeName(dataValue), itemSchema.type)) {
-                    // Required field present, wrong type.
-                    Data.set(data, path, await Schema._evaluateDefault(itemSchema));
-                }
-            } else {
-                // Required field present, type new SchemaDefinition.
-                await this.validate(dataValue, itemSchema.type);
-            }
-        };
         const ensureDefault = async (itemSchema: SchemaItem, path: string, error: boolean) => {
             if (!Data.has(data, path)) {
                 if (itemSchema.default === undefined) {
@@ -183,6 +176,64 @@ export class Schema {
                 } else {
                     // Required field missing, default present.
                     Data.set(data, path, await Schema._evaluateDefault(itemSchema));
+                }
+            }
+        };
+        const ensureType = async (itemSchema: SchemaItem, dataValue: any, path: string) => {
+            if (Array.isArray(itemSchema.type)) {
+                if (itemSchema.type.length !== 1) {
+                    throw new Error('Schema definition array types should have exactly one value.');
+                }
+                const arrayType = itemSchema.type[0];
+                if (typeof arrayType === 'string') {
+                    const dataType = Schema._getTypeName(dataValue);
+                    console.log('COMP', dataType, arrayType + '[]', path, schema);
+                    if (!Schema._isTypeMatch(dataType, arrayType + '[]')) {
+                        // Required field present, expected array type, wrong type.
+                        if (itemSchema.default === undefined) {
+                            throw new SchemaValidationError(
+                                `Incorrect type at "${path}" in ${JSON.stringify(data)}. ` +
+                                `Expected "${itemSchema.type}[]", got "${dataType}". ` +
+                                'If this is a declaration merged type, please ensure it is a class (has a constructor name).',
+                                path, data
+                            );
+                        } else {
+                            Data.set(data, path, await Schema._evaluateDefault(itemSchema));
+                        }
+                    }
+                } else {
+                    if (Array.isArray(dataValue)) {
+                        // Required field present, checking items in array against array type.
+                        for (const item of dataValue) {
+                            await this.validate(item, arrayType);
+                        }
+                    } else {
+                        // Required field present, expected array type, didn't get array.
+                        if (itemSchema.default === undefined) {
+                            throw new SchemaValidationError(`Incorrect type at "${path}" in ${JSON.stringify(data)}. Expected array.`, path, data);
+                        } else {
+                            Data.set(data, path, await Schema._evaluateDefault(itemSchema));
+                        }
+                    }
+                }
+            } else {
+                if (typeof itemSchema.type === 'string') {
+                    const dataType = Schema._getTypeName(dataValue);
+                    if (!Schema._isTypeMatch(dataType, itemSchema.type)) {
+                        // Required field present, wrong type.
+                        if (itemSchema.default === undefined) {
+                            throw new SchemaValidationError(
+                                `Incorrect type at "${path}" in ${JSON.stringify(data)}. ` +
+                                `Expected "${itemSchema.type}", got "${dataType}". ` +
+                                'If this is a declaration merged type, please ensure it is a class (has a constructor name).', path, data,
+                            );
+                        } else {
+                            Data.set(data, path, await Schema._evaluateDefault(itemSchema));
+                        }
+                    }
+                } else {
+                    // Required field present, type SchemaDefinition.
+                    await this.validate(dataValue, itemSchema.type);
                 }
             }
         };
