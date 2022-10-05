@@ -160,7 +160,7 @@ export class Schema {
      * @returns Validated 'data'.
      * @throws A {@link SchemaValidationError} if 'data' could not be validated as matching 'schema'.
      */
-    public static async validate<Schema extends SchemaDefinition>(data: ModelDefinition<Schema> | null, schema: Schema): Promise<Model<Schema>> {
+    public static async validate<Schema extends SchemaDefinition>(data: ModelDefinition<Schema> | null, schema: Schema) {
         if (typeof data !== 'object' || data === null) {
             throw new SchemaValidationError(`Invalid data "${data}". Cannot apply schema.`, null, data);
         }
@@ -262,6 +262,14 @@ export class Schema {
         });
         await Promise.all(tasks);
         return data as Model<Schema>;
+    }
+
+    public static async validateArray<Schema extends SchemaDefinition>(data: ModelDefinition<Schema>[], schema: Schema) {
+        const tasks = [];
+        for (const item of data) {
+            tasks.push(this.validate(item, schema));
+        }
+        return await Promise.all(tasks) as Model<Schema>[];
     }
 
     /**

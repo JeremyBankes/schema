@@ -10,6 +10,7 @@ A static class for interacting with structured data.
 
 - [create](Schema.md#create)
 - [validate](Schema.md#validate)
+- [validateArray](Schema.md#validatearray)
 
 ## Methods
 
@@ -39,7 +40,7 @@ An meta object representing the structure of data.
 
 #### Defined in
 
-[source/Schema.ts:152](https://github.com/JeremyBankes/schema/blob/6d6cf59/source/Schema.ts#L152)
+[source/Schema.ts:152](https://github.com/JeremyBankes/schema/blob/f47f170/source/Schema.ts#L152)
 
 ___
 
@@ -74,4 +75,31 @@ Validated 'data'.
 
 #### Defined in
 
-[source/Schema.ts:163](https://github.com/JeremyBankes/schema/blob/6d6cf59/source/Schema.ts#L163)
+[source/Schema.ts:163](https://github.com/JeremyBankes/schema/blob/f47f170/source/Schema.ts#L163)
+
+___
+
+### validateArray
+
+▸ `Static` **validateArray**<`Schema`\>(`data`, `schema`): `Promise`<[`Model`](../README.md#model)<`Schema`\>[]\>
+
+#### Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `Schema` | extends [`SchemaDefinition`](../README.md#schemadefinition) |
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `data` | [`ModelDefinition`](../README.md#modeldefinition)<`Schema`\>[] |
+| `schema` | `Schema` |
+
+#### Returns
+
+`Promise`<[`Model`](../README.md#model)<`Schema`\>[]\>
+
+#### Defined in
+
+[source/Schema.ts:267](https://github.com/JeremyBankes/schema/blob/f47f170/source/Schema.ts#L267)
