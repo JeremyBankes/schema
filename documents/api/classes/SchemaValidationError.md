@@ -104,7 +104,7 @@ Error.constructor
 
 #### Defined in
 
-[source/Schema.ts:126](https://github.com/JeremyBankes/schema/blob/f47f170/source/Schema.ts#L126)
+[source/Schema.ts:126](https://github.com/JeremyBankes/schema/blob/8dd1245/source/Schema.ts#L126)
 
 ## Accessors
 
@@ -118,7 +118,7 @@ Error.constructor
 
 #### Defined in
 
-[source/Schema.ts:132](https://github.com/JeremyBankes/schema/blob/f47f170/source/Schema.ts#L132)
+[source/Schema.ts:132](https://github.com/JeremyBankes/schema/blob/8dd1245/source/Schema.ts#L132)
 
 ___
 
@@ -132,4 +132,4 @@ ___
 
 #### Defined in
 
-[source/Schema.ts:136](https://github.com/JeremyBankes/schema/blob/f47f170/source/Schema.ts#L136)
+[source/Schema.ts:136](https://github.com/JeremyBankes/schema/blob/8dd1245/source/Schema.ts#L136)

@@ -187,7 +187,6 @@ export class Schema {
                 const arrayType = itemSchema.type[0];
                 if (typeof arrayType === 'string') {
                     const dataType = Schema._getTypeName(dataValue);
-                    console.log('COMP', dataType, arrayType + '[]', path, schema);
                     if (!Schema._isTypeMatch(dataType, arrayType + '[]')) {
                         // Required field present, expected array type, wrong type.
                         if (itemSchema.default === undefined) {
@@ -240,21 +239,25 @@ export class Schema {
         const tasks: Promise<void>[] = [];
         Data.walk(schema, (target, property, path) => {
             if (Schema._isItemSchema(property)) {
-                tasks.push(new Promise<void>(async (resolve) => {
-                    const itemSchema: SchemaItem = property;
-                    if (itemSchema.required === true) {
-                        await ensureDefault(itemSchema, path, true);
-                        const dataValue: any = Data.get(data, path);
-                        await ensureType(itemSchema, dataValue, path);
-                    } else {
-                        if (Data.has(data, path)) {
+                tasks.push(new Promise<void>(async (resolve, reject) => {
+                    try {
+                        const itemSchema: SchemaItem = property;
+                        if (itemSchema.required === true) {
+                            await ensureDefault(itemSchema, path, true);
                             const dataValue: any = Data.get(data, path);
                             await ensureType(itemSchema, dataValue, path);
                         } else {
-                            await ensureDefault(itemSchema, path, false);
+                            if (Data.has(data, path)) {
+                                const dataValue: any = Data.get(data, path);
+                                await ensureType(itemSchema, dataValue, path);
+                            } else {
+                                await ensureDefault(itemSchema, path, false);
+                            }
                         }
+                        resolve();
+                    } catch (error) {
+                        reject(error);
                     }
-                    resolve();
                 }));
                 return true;
             }

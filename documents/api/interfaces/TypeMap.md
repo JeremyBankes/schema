@@ -22,7 +22,7 @@ Represents a mapping of strings to their corresponding types.
 
 #### Defined in
 
-[source/Schema.ts:7](https://github.com/JeremyBankes/schema/blob/f47f170/source/Schema.ts#L7)
+[source/Schema.ts:7](https://github.com/JeremyBankes/schema/blob/8dd1245/source/Schema.ts#L7)
 
 ___
 
@@ -32,7 +32,7 @@ ___
 
 #### Defined in
 
-[source/Schema.ts:8](https://github.com/JeremyBankes/schema/blob/f47f170/source/Schema.ts#L8)
+[source/Schema.ts:8](https://github.com/JeremyBankes/schema/blob/8dd1245/source/Schema.ts#L8)
 
 ___
 
@@ -42,7 +42,7 @@ ___
 
 #### Defined in
 
-[source/Schema.ts:9](https://github.com/JeremyBankes/schema/blob/f47f170/source/Schema.ts#L9)
+[source/Schema.ts:9](https://github.com/JeremyBankes/schema/blob/8dd1245/source/Schema.ts#L9)
 
 ___
 
@@ -52,7 +52,7 @@ ___
 
 #### Defined in
 
-[source/Schema.ts:10](https://github.com/JeremyBankes/schema/blob/f47f170/source/Schema.ts#L10)
+[source/Schema.ts:10](https://github.com/JeremyBankes/schema/blob/8dd1245/source/Schema.ts#L10)
 
 ___
 
@@ -62,4 +62,4 @@ ___
 
 #### Defined in
 
-[source/Schema.ts:11](https://github.com/JeremyBankes/schema/blob/f47f170/source/Schema.ts#L11)
+[source/Schema.ts:11](https://github.com/JeremyBankes/schema/blob/8dd1245/source/Schema.ts#L11)
