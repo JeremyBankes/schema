@@ -1,4 +1,6 @@
 import { Data } from '@jeremy-bankes/toolbox';
+import { StringToNumberConverter, StringToBooleanConverter, StringToDateConverter } from './converters.js';
+import { TypeConverter } from './TypeConverter.js';
 
 /**
  * Represents a mapping of strings to their corresponding types.
@@ -144,6 +146,12 @@ export class SchemaValidationError extends Error {
  */
 export class Schema {
 
+    private static _typeConverters: TypeConverter<any, any>[] = [
+        new StringToNumberConverter(),
+        new StringToBooleanConverter(),
+        new StringToDateConverter()
+    ];
+
     /**
      * Allows you to define the structure of data. Required for validating an object with {@link Schema.validate}.
      * @param schema The structure of data.
@@ -167,49 +175,60 @@ export class Schema {
         const ensureDefault = async (itemSchema: SchemaItem, path: string, error: boolean) => {
             if (!Data.has(data, path)) {
                 if (itemSchema.default === undefined) {
-                    // Required field missing, no default.
                     if (error) {
                         throw new SchemaValidationError(`Missing required path "${path}" in ${JSON.stringify(data)}.`, path, data);
                     } else {
                         Data.set(data, path, null);
                     }
                 } else {
-                    // Required field missing, default present.
                     Data.set(data, path, await Schema._evaluateDefault(itemSchema));
                 }
             }
         };
         const ensureType = async (itemSchema: SchemaItem, dataValue: any, path: string) => {
+            const defaultOrError = async (dataType: string) => {
+                if (itemSchema.default === undefined) {
+                    throw new SchemaValidationError(
+                        `Incorrect type at "${path}" in ${JSON.stringify(data)}. ` +
+                        `Expected "${itemSchema.type}[]", got "${dataType}". ` +
+                        'If this is a declaration merged type, please ensure it is a class (has a constructor name).',
+                        path, data
+                    );
+                } else {
+                    Data.set(data, path, await Schema._evaluateDefault(itemSchema));
+                }
+            };
             if (Array.isArray(itemSchema.type)) {
                 if (itemSchema.type.length !== 1) {
                     throw new Error('Schema definition array types should have exactly one value.');
                 }
-                const arrayType = itemSchema.type[0];
+                let arrayType = itemSchema.type[0];
                 if (typeof arrayType === 'string') {
                     const dataType = Schema._getTypeName(dataValue);
                     if (!Schema._isTypeMatch(dataType, arrayType + '[]')) {
-                        // Required field present, expected array type, wrong type.
-                        if (itemSchema.default === undefined) {
-                            throw new SchemaValidationError(
-                                `Incorrect type at "${path}" in ${JSON.stringify(data)}. ` +
-                                `Expected "${itemSchema.type}[]", got "${dataType}". ` +
-                                'If this is a declaration merged type, please ensure it is a class (has a constructor name).',
-                                path, data
-                            );
+                        if (Array.isArray(dataValue)) {
+                            const convertedValues = dataValue.map(value => Schema._attemptTypeConversion(value, arrayType as keyof TypeMap));
+                            if (convertedValues.every(value => value !== null)) {
+                                Data.set(data, path, convertedValues);
+                            } else {
+                                defaultOrError(dataType);
+                            }
                         } else {
-                            Data.set(data, path, await Schema._evaluateDefault(itemSchema));
+                            defaultOrError(dataType);
                         }
                     }
                 } else {
                     if (Array.isArray(dataValue)) {
-                        // Required field present, checking items in array against array type.
                         for (const item of dataValue) {
                             await this.validate(item, arrayType);
                         }
                     } else {
-                        // Required field present, expected array type, didn't get array.
                         if (itemSchema.default === undefined) {
-                            throw new SchemaValidationError(`Incorrect type at "${path}" in ${JSON.stringify(data)}. Expected array.`, path, data);
+                            throw new SchemaValidationError(
+                                `Incorrect type at "${path}" in ${JSON.stringify(data)}. ` +
+                                `Expected array.`,
+                                path, data
+                            );
                         } else {
                             Data.set(data, path, await Schema._evaluateDefault(itemSchema));
                         }
@@ -219,19 +238,14 @@ export class Schema {
                 if (typeof itemSchema.type === 'string') {
                     const dataType = Schema._getTypeName(dataValue);
                     if (!Schema._isTypeMatch(dataType, itemSchema.type)) {
-                        // Required field present, wrong type.
-                        if (itemSchema.default === undefined) {
-                            throw new SchemaValidationError(
-                                `Incorrect type at "${path}" in ${JSON.stringify(data)}. ` +
-                                `Expected "${itemSchema.type}", got "${dataType}". ` +
-                                'If this is a declaration merged type, please ensure it is a class (has a constructor name).', path, data,
-                            );
+                        dataValue = Schema._attemptTypeConversion(dataValue, itemSchema.type);
+                        if (dataValue !== null) {
+                            Data.set(data, path, dataValue);
                         } else {
-                            Data.set(data, path, await Schema._evaluateDefault(itemSchema));
+                            defaultOrError(dataType);
                         }
                     }
                 } else {
-                    // Required field present, type SchemaDefinition.
                     await this.validate(dataValue, itemSchema.type);
                 }
             }
@@ -265,6 +279,28 @@ export class Schema {
         });
         await Promise.all(tasks);
         return data as Model<Schema>;
+    }
+
+    public static registerTypeConverter(converter: TypeConverter<any, any>) {
+        this._typeConverters.push(converter);
+    }
+
+    public static _attemptTypeConversion<FromType extends any>(value: FromType, toType: keyof TypeMap) {
+        const fromType = Schema._getTypeName(value);
+        if (fromType === toType) {
+            return value;
+        }
+        let converter: TypeConverter<FromType, TypeMap[typeof toType]> | null = null;
+        for (let i = 0; i < Schema._typeConverters.length && converter === null; i++) {
+            const potentialTypeConverter = Schema._typeConverters[i];
+            if (potentialTypeConverter.fromType === fromType && potentialTypeConverter.toType === toType) {
+                converter = potentialTypeConverter;
+            }
+        }
+        if (converter !== null) {
+            return converter.convert(value);
+        }
+        return null;
     }
 
     public static async validateArray<Schema extends SchemaDefinition>(data: ModelDefinition<Schema>[], schema: Schema) {

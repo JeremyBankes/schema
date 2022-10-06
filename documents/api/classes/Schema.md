@@ -10,6 +10,8 @@ A static class for interacting with structured data.
 
 - [create](Schema.md#create)
 - [validate](Schema.md#validate)
+- [registerTypeConverter](Schema.md#registertypeconverter)
+- [\_attemptTypeConversion](Schema.md#_attempttypeconversion)
 - [validateArray](Schema.md#validatearray)
 
 ## Methods
@@ -40,7 +42,7 @@ An meta object representing the structure of data.
 
 #### Defined in
 
-[source/Schema.ts:152](https://github.com/JeremyBankes/schema/blob/8dd1245/source/Schema.ts#L152)
+[source/Schema.ts:160](https://github.com/JeremyBankes/schema/blob/0a5915a/source/Schema.ts#L160)
 
 ___
 
@@ -75,7 +77,54 @@ Validated 'data'.
 
 #### Defined in
 
-[source/Schema.ts:163](https://github.com/JeremyBankes/schema/blob/8dd1245/source/Schema.ts#L163)
+[source/Schema.ts:171](https://github.com/JeremyBankes/schema/blob/0a5915a/source/Schema.ts#L171)
+
+___
+
+### registerTypeConverter
+
+▸ `Static` **registerTypeConverter**(`converter`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `converter` | `TypeConverter`<`any`, `any`\> |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[source/Schema.ts:284](https://github.com/JeremyBankes/schema/blob/0a5915a/source/Schema.ts#L284)
+
+___
+
+### \_attemptTypeConversion
+
+▸ `Static` **_attemptTypeConversion**<`FromType`\>(`value`, `toType`): `any`
+
+#### Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `FromType` | extends `unknown` |
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `value` | `FromType` |
+| `toType` | keyof [`TypeMap`](../interfaces/TypeMap.md) |
+
+#### Returns
+
+`any`
+
+#### Defined in
+
+[source/Schema.ts:288](https://github.com/JeremyBankes/schema/blob/0a5915a/source/Schema.ts#L288)
 
 ___
 
@@ -102,4 +151,4 @@ ___
 
 #### Defined in
 
-[source/Schema.ts:270](https://github.com/JeremyBankes/schema/blob/8dd1245/source/Schema.ts#L270)
+[source/Schema.ts:306](https://github.com/JeremyBankes/schema/blob/0a5915a/source/Schema.ts#L306)
