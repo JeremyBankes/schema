@@ -4,69 +4,149 @@ Schema: API Reference
 
 ## Table of contents
 
-### Interfaces
-
-- [TypeMap](interfaces/TypeMap.md)
-
-### Type Aliases
-
-- [SchemaDefinition](README.md#schemadefinition)
-- [ModelDefinition](README.md#modeldefinition)
-- [Model](README.md#model)
-
 ### Classes
 
 - [SchemaValidationError](classes/SchemaValidationError.md)
-- [Schema](classes/Schema.md)
+
+### Type Aliases
+
+- [TypeMap](README.md#typemap)
+- [Schema](README.md#schema)
+- [Model](README.md#model)
+
+### Functions
+
+- [create](README.md#create)
+- [build](README.md#build)
+- [validate](README.md#validate)
 
 ## Type Aliases
 
-### SchemaDefinition
+### TypeMap
 
-Ƭ **SchemaDefinition**: `Object`
+Ƭ **TypeMap**: `Object`
 
-Represents a definition of a schema.
-
-#### Index signature
-
-▪ [SchemaDefinitionKey: `string`]: `SchemaItem` \| [`SchemaDefinition`](README.md#schemadefinition)
-
-#### Defined in
-
-[source/Schema.ts:19](https://github.com/JeremyBankes/schema/blob/0a5915a/source/Schema.ts#L19)
-
-___
-
-### ModelDefinition
-
-Ƭ **ModelDefinition**<`Definition`\>: { [Key in keyof Definition as IsValueRequired<Definition[Key]\> extends true ? Key : never]: ModelItemType<Definition[Key], true\> } & { [Key in keyof Definition as IsValueRequired<Definition[Key]\> extends false ? Key : never]?: ModelItemType<Definition[Key], true\> }
-
-Typing for inline data that matches a Definition.
-
-#### Type parameters
+#### Type declaration
 
 | Name | Type |
 | :------ | :------ |
-| `Definition` | extends [`SchemaDefinition`](README.md#schemadefinition) |
+| `string` | `string` |
+| `number` | `number` |
+| `boolean` | `boolean` |
+| `Date` | `Date` |
+| `any` | `any` |
 
 #### Defined in
 
-[source/Schema.ts:102](https://github.com/JeremyBankes/schema/blob/0a5915a/source/Schema.ts#L102)
+[source/Schema.ts:35](https://github.com/JeremyBankes/schema/blob/3fe46d4/source/Schema.ts#L35)
+
+___
+
+### Schema
+
+Ƭ **Schema**: `Object`
+
+#### Index signature
+
+▪ [Key: `string`]: `SchemaItem` \| [`Schema`](README.md#schema)
+
+#### Defined in
+
+[source/Schema.ts:53](https://github.com/JeremyBankes/schema/blob/3fe46d4/source/Schema.ts#L53)
 
 ___
 
 ### Model
 
-Ƭ **Model**<`Definition`\>: { [Key in keyof Definition as IsValuePresent<Definition[Key]\> extends true ? Key : never]: ModelItemType<Definition[Key], false\> } & { [Key in keyof Definition as IsValuePresent<Definition[Key]\> extends false ? Key : never]?: ModelItemType<Definition[Key], false\> }
-
-Typing for data that has been validated as matching a Definition.
+Ƭ **Model**<`Layout`, `IsDefinition`\>: { [Key in keyof Layout as IsKeyRequired<Key, Layout, IsDefinition\> extends true ? Key : never]: ModelValue<Key, Layout, IsDefinition\> } & { [Key in keyof Layout as IsKeyRequired<Key, Layout, IsDefinition\> extends true ? never : Key]?: ModelValue<Key, Layout, IsDefinition\> }
 
 #### Type parameters
 
 | Name | Type |
 | :------ | :------ |
-| `Definition` | extends [`SchemaDefinition`](README.md#schemadefinition) |
+| `Layout` | extends [`Schema`](README.md#schema) |
+| `IsDefinition` | extends `boolean` = ``false`` |
 
 #### Defined in
 
-[source/Schema.ts:110](https://github.com/JeremyBankes/schema/blob/0a5915a/source/Schema.ts#L110)
+[source/Schema.ts:68](https://github.com/JeremyBankes/schema/blob/3fe46d4/source/Schema.ts#L68)
+
+## Functions
+
+### create
+
+▸ **create**<`Layout`\>(`schema`): `Layout`
+
+#### Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `Layout` | extends [`Schema`](README.md#schema) |
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `schema` | `Layout` |
+
+#### Returns
+
+`Layout`
+
+#### Defined in
+
+[source/Schema.ts:173](https://github.com/JeremyBankes/schema/blob/3fe46d4/source/Schema.ts#L173)
+
+___
+
+### build
+
+▸ **build**<`Layout`\>(`data`, `schema`): [`Model`](README.md#model)<`Layout`\>
+
+#### Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `Layout` | extends [`Schema`](README.md#schema) |
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `data` | [`Model`](README.md#model)<`Layout`, ``true``\> |
+| `schema` | `Layout` |
+
+#### Returns
+
+[`Model`](README.md#model)<`Layout`\>
+
+#### Defined in
+
+[source/Schema.ts:177](https://github.com/JeremyBankes/schema/blob/3fe46d4/source/Schema.ts#L177)
+
+___
+
+### validate
+
+▸ **validate**<`Layout`\>(`data`, `schema`): [`Model`](README.md#model)<`Layout`\>
+
+#### Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `Layout` | extends [`Schema`](README.md#schema) |
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `data` | `any` |
+| `schema` | `Layout` |
+
+#### Returns
+
+[`Model`](README.md#model)<`Layout`\>
+
+#### Defined in
+
+[source/Schema.ts:181](https://github.com/JeremyBankes/schema/blob/3fe46d4/source/Schema.ts#L181)

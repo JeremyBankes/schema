@@ -2,8 +2,6 @@
 
 # Class: SchemaValidationError
 
-An error that is thrown if supplied data does not pass validation.
-
 ## Hierarchy
 
 - `Error`
@@ -25,6 +23,7 @@ An error that is thrown if supplied data does not pass validation.
 
 ### Accessors
 
+- [type](SchemaValidationError.md#type)
 - [path](SchemaValidationError.md#path)
 - [data](SchemaValidationError.md#data)
 
@@ -88,15 +87,16 @@ node_modules/typescript/lib/lib.es5.d.ts:1042
 
 ### constructor
 
-• **new SchemaValidationError**(`message`, `path`, `data`)
+• **new SchemaValidationError**(`message`, `type`, `data`, `path`)
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `message` | `string` | The error message. |
-| `path` | ``null`` \| `string` | The path to the value that failed validation. |
+| `type` | `string` | - |
 | `data` | `any` | The data that failed validation. |
+| `path` | ``null`` \| `string` | The path to the value that failed validation. |
 
 #### Overrides
 
@@ -104,9 +104,23 @@ Error.constructor
 
 #### Defined in
 
-[source/Schema.ts:128](https://github.com/JeremyBankes/schema/blob/0a5915a/source/Schema.ts#L128)
+[source/Schema.ts:22](https://github.com/JeremyBankes/schema/blob/3fe46d4/source/Schema.ts#L22)
 
 ## Accessors
+
+### type
+
+• `get` **type**(): `string`
+
+#### Returns
+
+`string`
+
+#### Defined in
+
+[source/Schema.ts:29](https://github.com/JeremyBankes/schema/blob/3fe46d4/source/Schema.ts#L29)
+
+___
 
 ### path
 
@@ -118,18 +132,18 @@ Error.constructor
 
 #### Defined in
 
-[source/Schema.ts:134](https://github.com/JeremyBankes/schema/blob/0a5915a/source/Schema.ts#L134)
+[source/Schema.ts:30](https://github.com/JeremyBankes/schema/blob/3fe46d4/source/Schema.ts#L30)
 
 ___
 
 ### data
 
-• `get` **data**(): `string`
+• `get` **data**(): `object`
 
 #### Returns
 
-`string`
+`object`
 
 #### Defined in
 
-[source/Schema.ts:138](https://github.com/JeremyBankes/schema/blob/0a5915a/source/Schema.ts#L138)
+[source/Schema.ts:31](https://github.com/JeremyBankes/schema/blob/3fe46d4/source/Schema.ts#L31)
