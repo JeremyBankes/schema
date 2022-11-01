@@ -1,1 +1,13 @@
-export { TypeMap, Schema, Model, SchemaValidationError, create, build, validate } from './Schema.js';
+export {
+    Schema,
+    Model,
+    TypeConversionCallback,
+    TypeMap,
+    ValidationError,
+    build,
+    validate,
+    registerTypeConversion,
+    registerTypeName,
+    getTypeName,
+    attemptConversion
+} from './Schema.js';
