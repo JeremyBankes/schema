@@ -1,31 +1,37 @@
-[Schema: API Reference](../README.md) / SchemaValidationError
+[Schema: API Reference](../README.md) / ValidationError
 
-# Class: SchemaValidationError
+# Class: ValidationError
+
+Represents and error that occures while validating an object.
+
+**`See`**
+
+validate
 
 ## Hierarchy
 
 - `Error`
 
-  ↳ **`SchemaValidationError`**
+  ↳ **`ValidationError`**
 
 ## Table of contents
 
 ### Properties
 
-- [cause](SchemaValidationError.md#cause)
-- [name](SchemaValidationError.md#name)
-- [message](SchemaValidationError.md#message)
-- [stack](SchemaValidationError.md#stack)
+- [cause](ValidationError.md#cause)
+- [name](ValidationError.md#name)
+- [message](ValidationError.md#message)
+- [stack](ValidationError.md#stack)
 
 ### Constructors
 
-- [constructor](SchemaValidationError.md#constructor)
+- [constructor](ValidationError.md#constructor)
 
 ### Accessors
 
-- [type](SchemaValidationError.md#type)
-- [path](SchemaValidationError.md#path)
-- [data](SchemaValidationError.md#data)
+- [type](ValidationError.md#type)
+- [path](ValidationError.md#path)
+- [data](ValidationError.md#data)
 
 ## Properties
 
@@ -87,7 +93,7 @@ node_modules/typescript/lib/lib.es5.d.ts:1042
 
 ### constructor
 
-• **new SchemaValidationError**(`message`, `type`, `data`, `path`)
+• **new ValidationError**(`message`, `type`, `data`, `path`)
 
 #### Parameters
 
@@ -104,7 +110,7 @@ Error.constructor
 
 #### Defined in
 
-[source/Schema.ts:22](https://github.com/JeremyBankes/schema/blob/3fe46d4/source/Schema.ts#L22)
+[source/Schema.ts:388](https://github.com/JeremyBankes/schema/blob/2ee9e2c/source/Schema.ts#L388)
 
 ## Accessors
 
@@ -118,7 +124,7 @@ Error.constructor
 
 #### Defined in
 
-[source/Schema.ts:29](https://github.com/JeremyBankes/schema/blob/3fe46d4/source/Schema.ts#L29)
+[source/Schema.ts:395](https://github.com/JeremyBankes/schema/blob/2ee9e2c/source/Schema.ts#L395)
 
 ___
 
@@ -132,7 +138,7 @@ ___
 
 #### Defined in
 
-[source/Schema.ts:30](https://github.com/JeremyBankes/schema/blob/3fe46d4/source/Schema.ts#L30)
+[source/Schema.ts:396](https://github.com/JeremyBankes/schema/blob/2ee9e2c/source/Schema.ts#L396)
 
 ___
 
@@ -146,4 +152,4 @@ ___
 
 #### Defined in
 
-[source/Schema.ts:31](https://github.com/JeremyBankes/schema/blob/3fe46d4/source/Schema.ts#L31)
+[source/Schema.ts:397](https://github.com/JeremyBankes/schema/blob/2ee9e2c/source/Schema.ts#L397)
