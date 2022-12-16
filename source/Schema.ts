@@ -177,7 +177,7 @@ export function validate<Value extends SchemaValue>(object: any, schema: Value, 
             const model = validate(object, schema.type, path);
             if (model === undefined) {
                 throw new ValidationError(
-                    `Missing required field at "${path.join('.')}".`,
+                    path.length > 0 ? `Missing required field at "${path.join('.')}".` : `Cannot validate "${object}."`,
                     'missing', object, path.join('.')
                 );
             }
@@ -201,7 +201,7 @@ export function validate<Value extends SchemaValue>(object: any, schema: Value, 
                 return undefined as Model<Value>;
             } else {
                 throw new ValidationError(
-                    `Missing required field at "${path.join('.')}".`,
+                    path.length > 0 ? `Missing required field at "${path.join('.')}".` : `Cannot validate "${object}."`,
                     'missing', object, path.join('.')
                 );
             }
@@ -218,7 +218,7 @@ export function validate<Value extends SchemaValue>(object: any, schema: Value, 
                 return undefined as Model<Value>;
             } else {
                 throw new ValidationError(
-                    `Missing required field at "${path.join('.')}".`,
+                    path.length > 0 ? `Missing required field at "${path.join('.')}".` : `Cannot validate "${object}."`,
                     'missing', object, path.join('.')
                 );
             }
@@ -382,6 +382,7 @@ export class ValidationError extends Error {
 
     /**
      * @param message The error message.
+     * @param type The type of validation error.
      * @param path The path to the value that failed validation.
      * @param data The data that failed validation.
      */
