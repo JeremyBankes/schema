@@ -58,7 +58,7 @@ A callback that converts a given value to a different type.
 
 #### Defined in
 
-[source/Schema.ts:64](https://github.com/JeremyBankes/schema/blob/2ee9e2c/source/Schema.ts#L64)
+[source/Schema.ts:64](https://github.com/jeremybankes/schema/blob/debf27d/source/Schema.ts#L64)
 
 ___
 
@@ -78,7 +78,7 @@ SchemaValue
 
 #### Defined in
 
-[source/Schema.ts:80](https://github.com/JeremyBankes/schema/blob/2ee9e2c/source/Schema.ts#L80)
+[source/Schema.ts:80](https://github.com/jeremybankes/schema/blob/debf27d/source/Schema.ts#L80)
 
 ___
 
@@ -100,7 +100,7 @@ SchemaValue
 
 #### Defined in
 
-[source/Schema.ts:96](https://github.com/JeremyBankes/schema/blob/2ee9e2c/source/Schema.ts#L96)
+[source/Schema.ts:96](https://github.com/jeremybankes/schema/blob/debf27d/source/Schema.ts#L96)
 
 ## Functions
 
@@ -134,7 +134,7 @@ A schema that can be used to validate an object with [validate](README.md#valida
 
 #### Defined in
 
-[source/Schema.ts:150](https://github.com/JeremyBankes/schema/blob/2ee9e2c/source/Schema.ts#L150)
+[source/Schema.ts:150](https://github.com/jeremybankes/schema/blob/debf27d/source/Schema.ts#L150)
 
 ___
 
@@ -166,7 +166,7 @@ A validated and evaluated copy of 'object'.
 
 #### Defined in
 
-[source/Schema.ts:161](https://github.com/JeremyBankes/schema/blob/2ee9e2c/source/Schema.ts#L161)
+[source/Schema.ts:161](https://github.com/jeremybankes/schema/blob/debf27d/source/Schema.ts#L161)
 
 ___
 
@@ -197,7 +197,7 @@ Registers a type converter used for runtime type conversions during validation p
 
 #### Defined in
 
-[source/Schema.ts:246](https://github.com/JeremyBankes/schema/blob/2ee9e2c/source/Schema.ts#L246)
+[source/Schema.ts:246](https://github.com/jeremybankes/schema/blob/debf27d/source/Schema.ts#L246)
 
 ___
 
@@ -229,7 +229,7 @@ Uses the registered type converters to attemp a conversion of 'value' to the typ
 
 #### Defined in
 
-[source/Schema.ts:263](https://github.com/JeremyBankes/schema/blob/2ee9e2c/source/Schema.ts#L263)
+[source/Schema.ts:263](https://github.com/jeremybankes/schema/blob/debf27d/source/Schema.ts#L263)
 
 ___
 
@@ -255,7 +255,7 @@ TypeMap
 
 #### Defined in
 
-[source/Schema.ts:283](https://github.com/JeremyBankes/schema/blob/2ee9e2c/source/Schema.ts#L283)
+[source/Schema.ts:283](https://github.com/jeremybankes/schema/blob/debf27d/source/Schema.ts#L283)
 
 ___
 
@@ -279,4 +279,4 @@ The name of value's type.
 
 #### Defined in
 
-[source/Schema.ts:356](https://github.com/JeremyBankes/schema/blob/2ee9e2c/source/Schema.ts#L356)
+[source/Schema.ts:356](https://github.com/jeremybankes/schema/blob/debf27d/source/Schema.ts#L356)

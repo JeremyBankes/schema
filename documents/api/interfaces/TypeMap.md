@@ -23,7 +23,7 @@ Used for static analysis.
 
 #### Defined in
 
-[source/Schema.ts:44](https://github.com/JeremyBankes/schema/blob/2ee9e2c/source/Schema.ts#L44)
+[source/Schema.ts:44](https://github.com/jeremybankes/schema/blob/debf27d/source/Schema.ts#L44)
 
 ___
 
@@ -33,7 +33,7 @@ ___
 
 #### Defined in
 
-[source/Schema.ts:45](https://github.com/JeremyBankes/schema/blob/2ee9e2c/source/Schema.ts#L45)
+[source/Schema.ts:45](https://github.com/jeremybankes/schema/blob/debf27d/source/Schema.ts#L45)
 
 ___
 
@@ -43,7 +43,7 @@ ___
 
 #### Defined in
 
-[source/Schema.ts:46](https://github.com/JeremyBankes/schema/blob/2ee9e2c/source/Schema.ts#L46)
+[source/Schema.ts:46](https://github.com/jeremybankes/schema/blob/debf27d/source/Schema.ts#L46)
 
 ___
 
@@ -53,7 +53,7 @@ ___
 
 #### Defined in
 
-[source/Schema.ts:47](https://github.com/JeremyBankes/schema/blob/2ee9e2c/source/Schema.ts#L47)
+[source/Schema.ts:47](https://github.com/jeremybankes/schema/blob/debf27d/source/Schema.ts#L47)
 
 ___
 
@@ -63,4 +63,4 @@ ___
 
 #### Defined in
 
-[source/Schema.ts:48](https://github.com/JeremyBankes/schema/blob/2ee9e2c/source/Schema.ts#L48)
+[source/Schema.ts:48](https://github.com/jeremybankes/schema/blob/debf27d/source/Schema.ts#L48)

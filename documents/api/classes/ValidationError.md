@@ -100,7 +100,7 @@ node_modules/typescript/lib/lib.es5.d.ts:1042
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `message` | `string` | The error message. |
-| `type` | `string` | - |
+| `type` | `string` | The type of validation error. |
 | `data` | `any` | The data that failed validation. |
 | `path` | ``null`` \| `string` | The path to the value that failed validation. |
 
@@ -110,7 +110,7 @@ Error.constructor
 
 #### Defined in
 
-[source/Schema.ts:388](https://github.com/JeremyBankes/schema/blob/2ee9e2c/source/Schema.ts#L388)
+[source/Schema.ts:389](https://github.com/jeremybankes/schema/blob/debf27d/source/Schema.ts#L389)
 
 ## Accessors
 
@@ -124,7 +124,7 @@ Error.constructor
 
 #### Defined in
 
-[source/Schema.ts:395](https://github.com/JeremyBankes/schema/blob/2ee9e2c/source/Schema.ts#L395)
+[source/Schema.ts:396](https://github.com/jeremybankes/schema/blob/debf27d/source/Schema.ts#L396)
 
 ___
 
@@ -138,7 +138,7 @@ ___
 
 #### Defined in
 
-[source/Schema.ts:396](https://github.com/JeremyBankes/schema/blob/2ee9e2c/source/Schema.ts#L396)
+[source/Schema.ts:397](https://github.com/jeremybankes/schema/blob/debf27d/source/Schema.ts#L397)
 
 ___
 
@@ -152,4 +152,4 @@ ___
 
 #### Defined in
 
-[source/Schema.ts:397](https://github.com/JeremyBankes/schema/blob/2ee9e2c/source/Schema.ts#L397)
+[source/Schema.ts:398](https://github.com/jeremybankes/schema/blob/debf27d/source/Schema.ts#L398)
