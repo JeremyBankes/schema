@@ -1,7 +1,0 @@
-{
-    "name": "Schema: API Reference",
-    "sort": "source-order",
-    "out": "../documents/api",
-    "readme": "none",
-    "excludePrivate": true
-}

@@ -1,6 +1,4 @@
 # Schema
 
-Examples and documentation coming soon...
+Examples and documentation incomplete...
 
----
-[View API Reference](documents/api/README.md) for more details.
