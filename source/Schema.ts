@@ -21,7 +21,7 @@ export type TypeConverter<FromType, ToType> = (value: FromType) => ToType;
  * A key in the second level hierarchy represents the type of converted data.
  */
 type TypeConverterMap = (
-    { [Key: string]: { [ToTypeName in keyof TypeMap]?: TypeConverter<any, TypeMap[ToTypeName]> } }
+    { [Key: string]: { [Key: string]: TypeConverter<any, any> } }
 );
 
 /**
@@ -44,11 +44,6 @@ export type SchemaItem = {
  * A hierarchy describing the structure of an object.
  */
 export type SchemaHierarchy = { [Key: string]: Schema };
-
-/**
- * A magical test.
- */
-export type MagicTest = false;
 
 /**
  * An item that describes the structure, type or layout of data.
@@ -119,7 +114,7 @@ export function build<Layout extends Schema>(schema: Layout): Layout {
 function validateByKeyOfTypeMap<Layout extends Schema>(value: any, schema: keyof TypeMap, path: string[]): Model<Layout> {
     const dataType = typeof value;
     if (dataType !== schema) {
-        const converters = TYPE_CONVERTER_MAP[dataType as keyof typeof TYPE_CONVERTER_MAP];
+        const converters = TYPE_CONVERTER_MAP[dataType];
         if (converters !== undefined) {
             const converter = converters[schema];
             if (converter !== undefined) {
@@ -252,14 +247,11 @@ function isRequired(schema: Schema): boolean {
  * @param toTypeName The name of the type to convert to.
  * @param conversionCallback A callback that can convert the type represented by 'fromTypeName' to the type represented by 'toTypeName'.
  */
-export function registerTypeConversion<FromType, ToType>(
-    fromTypeName: string, toTypeName: keyof TypeMap,
-    conversionCallback: TypeConverter<FromType, ToType>
-) {
+export function registerTypeConversion<FromType, ToType>(fromTypeName: string, toTypeName: string, conversionCallback: TypeConverter<FromType, ToType>) {
     if (!(fromTypeName in TYPE_CONVERTER_MAP)) {
         TYPE_CONVERTER_MAP[fromTypeName] = {};
     }
-    TYPE_CONVERTER_MAP[fromTypeName][toTypeName] = conversionCallback as any;
+    TYPE_CONVERTER_MAP[fromTypeName][toTypeName] = conversionCallback;
 }
 
 /**
