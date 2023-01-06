@@ -59,8 +59,8 @@ export type Model<Layout extends Schema> = (
     Layout extends SchemaItem ? Model<Layout["type"]> :
     Layout extends [Schema] ? Model<Layout["0"]>[] :
     Layout extends SchemaHierarchy ? (
-        { [Key in keyof Layout as Require<Layout[Key]> extends true ? Key : never]: Model<Layout[Key]> } &
-        { [Key in keyof Layout as Require<Layout[Key]> extends true ? never : Key]?: Model<Layout[Key]> }
+        { [Key in keyof Layout as Exists<Layout[Key]> extends true ? Key : never]: Model<Layout[Key]> } &
+        { [Key in keyof Layout as Exists<Layout[Key]> extends true ? never : Key]?: Model<Layout[Key]> }
     ) :
     never
 );
@@ -71,10 +71,10 @@ export type Model<Layout extends Schema> = (
  * @see SchemaItem
  * @see Schema
  */
-type Require<Layout extends Schema> = (
-    Layout extends SchemaItem ? (Layout["required"] extends true ? (Layout extends { default: any } ? false : true) : false) :
-    Layout extends [Schema] ? Require<Layout[0]> :
-    Layout extends SchemaHierarchy ? { [Key in keyof Layout]: Require<Layout[Key]> } extends { [Key in keyof Layout]: true } ? true : false :
+type Exists<Layout extends Schema> = (
+    Layout extends SchemaItem ? (Layout["required"] extends true ? true : (Layout extends { default: any } ? true : false)) :
+    Layout extends [Schema] ? Exists<Layout[0]> :
+    Layout extends SchemaHierarchy ? { [Key in keyof Layout]: Exists<Layout[Key]> } extends { [Key in keyof Layout]: false } ? false : true :
     false
 );
 
@@ -171,7 +171,7 @@ function validateBySchemaHierarchy<Layout extends Schema>(value: any, schema: Sc
             data[key] = validate(value[key], schema[key], [...path, key]);
         } catch (error) {
             if (error instanceof ValidationError) {
-                if (isRequired(schema[key])) {
+                if (isExistent(schema[key])) {
                     throw error;
                 }
             } else {
@@ -225,14 +225,14 @@ function isSchema(value: any): value is Schema {
     return isKeyOfTypeMap(value) || isSchemaItem(value) || isSchemaArray(value) || isSchemaHierarchy(value);
 }
 
-function isRequired(schema: Schema): boolean {
+function isExistent(schema: Schema): boolean {
     if (isSchemaItem(schema)) {
         return schema.required || schema.default;
     } else if (isSchemaArray(schema)) {
-        return isRequired(schema[0]);
+        return isExistent(schema[0]);
     } else if (isSchemaHierarchy(schema)) {
         for (const key in schema) {
-            if (isRequired(schema[key])) {
+            if (isExistent(schema[key])) {
                 return true;
             }
         }
