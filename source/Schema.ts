@@ -1,27 +1,36 @@
-const PRIMITIVES = [
-    "undefined",
-    "boolean",
-    "number",
-    "bigint",
-    "string",
-    "symbol",
-    "object",
-    "Date"
-];
-
-export interface Primitives {
-    "undefined": undefined,
-    "boolean": boolean,
-    "number": number,
-    "bigint": bigint,
-    "string": string,
-    "symbol": symbol,
-    "object": object,
-    "Date": Date
+export interface PrimitiveMap {
+    undefined: undefined,
+    boolean: boolean,
+    number: number,
+    bigint: bigint,
+    string: string,
+    symbol: symbol,
+    object: object,
+    Date: Date
 }
 
+type Primitives = PrimitiveMap[keyof PrimitiveMap];
+
+// to: from[]
+export interface Conversions {
+    boolean: number | bigint | string,
+    number: boolean | bigint | string | Date,
+    bigint: number | string,
+    string: boolean | number | bigint | object | Date,
+    object: string,
+    Date: number | bigint | string
+}
+
+type Converter<From, To extends Primitives> = (fromType: From) => To;
+
+type ConverterMap = {
+    [FromTypeKey in keyof Conversions]: {
+        [ToTypeKey in keyof PrimitiveMap]?: Converter<PrimitiveMap[FromTypeKey], PrimitiveMap[ToTypeKey]>
+    }
+};
+
 namespace Schema {
-    export type Primitive = keyof Primitives;
+    export type Primitive = keyof PrimitiveMap;
     export type Meta = {
         type: All,
         required: boolean,
@@ -35,7 +44,7 @@ namespace Schema {
 // If you're wondering while I'm wrapping my types in Tuples, me too.
 // https://stackoverflow.com/questions/75188805/how-should-one-avoid-excessively-deep-type-instantiation-when-attemping-to-creat
 export type Model<Schema extends Schema.All> = (
-    [Schema] extends [Schema.Primitive] ? Primitives[Schema] :
+    [Schema] extends [Schema.Primitive] ? PrimitiveMap[Schema] :
     [Schema] extends [Schema.Meta] ? Model<Schema["type"]> :
     [Schema] extends [Schema.Array] ? Model<Schema[0]>[] :
     [Schema] extends [Schema.Hierarchy] ? (
@@ -46,12 +55,14 @@ export type Model<Schema extends Schema.All> = (
 );
 
 export type Source<Schema extends Schema.All> = (
-    [Schema] extends [Schema.Primitive] ? Primitives[Schema] :
+    [Schema] extends [Schema.Primitive] ? (
+        [Schema] extends [keyof Conversions] ? Conversions[Schema] | PrimitiveMap[Schema] : PrimitiveMap[Schema]
+    ) :
     [Schema] extends [Schema.Meta] ? Source<Schema["type"]> :
     [Schema] extends [Schema.Array] ? Source<Schema[0]>[] :
     [Schema] extends [Schema.Hierarchy] ? (
-        { [Key in keyof Schema as Optionality<Schema[Key]> extends true ? Key : never]?: Source<Schema[Key]> } &
-        { [Key in keyof Schema as Optionality<Schema[Key]> extends true ? never : Key]: Source<Schema[Key]> }
+        { [Key in keyof Schema as Optionality<Schema[Key]> extends true ? never : Key]: Source<Schema[Key]> } &
+        { [Key in keyof Schema as Optionality<Schema[Key]> extends true ? Key : never]?: Source<Schema[Key]> }
     ) :
     never
 );
@@ -60,7 +71,7 @@ type Existant<Schema extends Schema.All> = (
     Schema extends Schema.Meta ? (Schema["required"] extends true ? true : (Schema extends { default: any } ? true : false)) :
     Schema extends Schema.Array ? Existant<Schema[0]> :
     Schema extends Schema.Hierarchy ? { [Key in keyof Schema]: Existant<Schema[Key]> } extends { [Key in keyof Schema]: false } ? false : true :
-    false
+    true
 );
 
 type Optionality<Schema extends Schema.All> = (
@@ -69,6 +80,56 @@ type Optionality<Schema extends Schema.All> = (
     Schema extends Schema.Hierarchy ? { [Key in keyof Schema]: Optionality<Schema[Key]> } extends { [Key in keyof Schema]: false } ? false : true :
     false
 );
+
+const PRIMITIVES = [
+    "undefined",
+    "boolean",
+    "number",
+    "bigint",
+    "string",
+    "symbol",
+    "object",
+    "Date"
+];
+
+const CONVERTERS: ConverterMap = {
+    boolean: {
+        number: (value) => value ? 1 : 0,
+        bigint: (value) => value ? 1n : 0n,
+        string: (value) => value ? "true" : "false"
+    },
+    number: {
+        boolean: (value) => value === 0 ? false : true,
+        bigint: (value) => BigInt(value),
+        string: (value) => value.toString(),
+        Date: (value) => new Date(value)
+    },
+    bigint: {
+        number: (value) => Number(value),
+        string: (value) => value.toString()
+    },
+    string: {
+        boolean: (value) => value === "false" ? false : Boolean(value),
+        number: (value) => parseFloat(value),
+        bigint: (value) => BigInt(value),
+        object: (value) => JSON.parse(value),
+        Date: (value) => new Date(value)
+    },
+    object: {
+        string: (value) => JSON.stringify(value)
+    },
+    Date: {
+        number: (value) => value.getTime(),
+        bigint: (value) => BigInt(value.getTime()),
+        string: (value) => value.toISOString()
+    }
+};
+
+export function registerConverter<FromTypeName extends keyof Conversions, ToTypeName extends keyof PrimitiveMap>
+    (fromTypeName: FromTypeName, toTypeName: ToTypeName, converter: Converter<PrimitiveMap[FromTypeName], PrimitiveMap[ToTypeName]>) {
+    // @ts-expect-error
+    CONVERTERS[fromTypeName][toTypeName] = converter;
+}
 
 function isSchemaPrimitive(value: any): value is Schema.Primitive {
     if (typeof value !== "string") {
@@ -130,24 +191,44 @@ export function build<Layout extends Schema.All>(schema: Layout): Layout {
     return schema;
 }
 
-export function validate<Schema extends Schema.All>(source: Source<Schema>, schema: Schema, path: string[] = []): Model<Schema> {
+export function validate<Schema extends Schema.All>(source: Source<Schema>, schema: Schema): Model<Schema> {
+    return _validate(source, schema, source, []) as Model<Schema>;
+}
+
+function _validate(source: any, schema: Schema.All, originalSource: any, path: string[]): any {
     if (isSchemaPrimitive(schema)) {
-        if (typeof source !== schema) {
+        const sourceType = typeof source;
+        if (sourceType !== schema) {
             if (!(source instanceof Object) || source.constructor.name !== schema) {
-                throw new ValidationError("incorrectType", source, schema, path);
+                if (sourceType in CONVERTERS) {
+                    let fromSourceTypeConverters;
+                    if (source instanceof Object) {
+                        fromSourceTypeConverters = CONVERTERS[source.constructor.name as keyof ConverterMap];
+                    }
+                    if (fromSourceTypeConverters === undefined) {
+                        fromSourceTypeConverters = CONVERTERS[sourceType as keyof ConverterMap];
+                    }
+                    if (fromSourceTypeConverters !== undefined) {
+                        const converter = fromSourceTypeConverters[schema] as Converter<any, any>;
+                        if (converter !== undefined) {
+                            return converter(source);
+                        }
+                    }
+                }
+                throw new ValidationError(source === undefined ? "missing" : "incorrectType", originalSource, schema, path);
             }
         }
-        return source as unknown as Model<Schema>;
+        return source;
     } else if (isSchemaMeta(schema)) {
         try {
-            return validate<Schema>(source, schema.type as Schema, path) as unknown as Model<Schema>;
+            return _validate(source, schema.type, originalSource, path);
         } catch (error) {
             if (error instanceof ValidationError) {
                 if ("default" in schema) {
                     if (typeof schema.default === "function") {
-                        return validate<Schema>(schema.default(), schema.type as Schema, path) as Model<Schema>;
+                        return _validate(schema.default(), schema.type, originalSource, path);
                     } else {
-                        return validate<Schema>(schema.default, schema.type as Schema, path) as Model<Schema>;
+                        return _validate(schema.default, schema.type, originalSource, path);
                     }
                 } else if (schema.required) {
                     throw error;
@@ -157,31 +238,31 @@ export function validate<Schema extends Schema.All>(source: Source<Schema>, sche
         }
     } else if (isSchemaArray(schema)) {
         if (!Array.isArray(source)) {
-            throw new ValidationError("incorrectType", source, schema, path);
+            throw new ValidationError("incorrectType", originalSource, schema, path);
         }
         const validated: any = [];
         for (let i = 0; i < source.length; i++) {
-            validated[i] = validate<Schema>(source[i], schema[0] as Schema, [...path, i.toString()]);
+            validated[i] = _validate(source[i], schema[0], originalSource, [...path, i.toString()]);
         }
-        return validated as Model<Schema>;
+        return validated;
     } else if (isSchemaHierarchy(schema)) {
         if (typeof source !== "object" || source === null) {
-            throw new ValidationError("incorrectType", source, schema, path);
+            throw new ValidationError("incorrectType", originalSource, schema, path);
         }
         const validated: any = {};
         for (const key in schema) {
             try {
                 if (!(key in source) && isOptional(schema[key]) && isSchemaHierarchy(schema[key])) {
-                    (source as any)[key] = {} as any;
+                    source[key] = {};
                 }
-                validated[key] = validate<Schema>((source as any)[key], schema[key] as Schema, [...path, key]);
+                validated[key] = _validate(source[key], schema[key], originalSource, [...path, key]);
             } catch (error) {
                 if (!(error instanceof ValidationError) || !isOptional(schema[key])) {
                     throw error;
                 }
             }
         }
-        return validated as Model<Schema>;
+        return validated;
     } else {
         throw new Error("Invalid schema.");
     }
@@ -192,7 +273,7 @@ export type ValidationErrorType = "missing" | "incorrectType";
 export class ValidationError extends Error {
 
     private _type: ValidationErrorType;
-    private _data: object;
+    private _source: any;
     private _schema: Schema.All;
     private _path: string[];
 
@@ -205,15 +286,15 @@ export class ValidationError extends Error {
     public constructor(type: ValidationErrorType, source: any, schema: Schema.All, path: string[]) {
         super(ValidationError._buildMessage(type, source, schema, path));
         this._type = type;
-        this._path = path;
+        this._source = source;
         this._schema = schema;
-        this._data = source;
+        this._path = path;
     }
 
     public get type() { return this._type; }
     public get path() { return this._path; }
     public get schema() { return this._schema; }
-    public get data() { return this._data; }
+    public get data() { return this._source; }
 
     private static _buildMessage(type: ValidationErrorType, data: any, schema: Schema.All, path: string[]): string {
         if (path.length === 0) {
