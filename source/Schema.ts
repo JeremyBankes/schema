@@ -12,7 +12,7 @@ export interface PrimitiveMap {
 type Primitives = PrimitiveMap[keyof PrimitiveMap];
 
 // to: from[]
-export interface Conversions {
+export interface ConversionMap {
     boolean: number | bigint | string,
     number: boolean | bigint | string | Date,
     bigint: number | string,
@@ -24,12 +24,12 @@ export interface Conversions {
 type Converter<From, To extends Primitives> = (fromType: From) => To;
 
 type ConverterMap = {
-    [FromTypeKey in keyof Conversions]: {
+    [FromTypeKey in keyof ConversionMap]: {
         [ToTypeKey in keyof PrimitiveMap]?: Converter<PrimitiveMap[FromTypeKey], PrimitiveMap[ToTypeKey]>
     }
 };
 
-namespace Schema {
+export namespace Schema {
     export type Primitive = keyof PrimitiveMap;
     export type Meta = {
         type: All,
@@ -56,7 +56,7 @@ export type Model<Schema extends Schema.All> = (
 
 export type Source<Schema extends Schema.All> = (
     [Schema] extends [Schema.Primitive] ? (
-        [Schema] extends [keyof Conversions] ? Conversions[Schema] | PrimitiveMap[Schema] : PrimitiveMap[Schema]
+        [Schema] extends [keyof ConversionMap] ? ConversionMap[Schema] | PrimitiveMap[Schema] : PrimitiveMap[Schema]
     ) :
     [Schema] extends [Schema.Meta] ? Source<Schema["type"]> :
     [Schema] extends [Schema.Array] ? Source<Schema[0]>[] :
@@ -125,10 +125,14 @@ const CONVERTERS: ConverterMap = {
     }
 };
 
-export function registerConverter<FromTypeName extends keyof Conversions, ToTypeName extends keyof PrimitiveMap>
+export function registerConverter<FromTypeName extends keyof ConversionMap, ToTypeName extends keyof PrimitiveMap>
     (fromTypeName: FromTypeName, toTypeName: ToTypeName, converter: Converter<PrimitiveMap[FromTypeName], PrimitiveMap[ToTypeName]>) {
     // @ts-expect-error
     CONVERTERS[fromTypeName][toTypeName] = converter;
+}
+
+export function registerPrimitive<TypeName extends keyof PrimitiveMap>(typeName: TypeName) {
+    PRIMITIVES.push(typeName);
 }
 
 function isSchemaPrimitive(value: any): value is Schema.Primitive {
