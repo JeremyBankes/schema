@@ -196,10 +196,10 @@ export function build<Layout extends Schema.All>(schema: Layout): Layout {
 }
 
 export function validate<Schema extends Schema.All>(source: Source<Schema>, schema: Schema): Model<Schema> {
-    return _validate(source, schema, source, []) as Model<Schema>;
+    return _validate(source, schema, []) as Model<Schema>;
 }
 
-function _validate(source: any, schema: Schema.All, originalSource: any, path: string[]): any {
+function _validate(source: any, schema: Schema.All, path: string[]): any {
     if (isSchemaPrimitive(schema)) {
         const sourceType = typeof source;
         if (sourceType !== schema) {
@@ -219,20 +219,20 @@ function _validate(source: any, schema: Schema.All, originalSource: any, path: s
                         }
                     }
                 }
-                throw new ValidationError(source === undefined ? "missing" : "incorrectType", originalSource, schema, path);
+                throw new ValidationError(source === undefined ? "missing" : "incorrectType", source, schema, path);
             }
         }
         return source;
     } else if (isSchemaMeta(schema)) {
         try {
-            return _validate(source, schema.type, originalSource, path);
+            return _validate(source, schema.type, path);
         } catch (error) {
             if (error instanceof ValidationError) {
                 if ("default" in schema) {
                     if (typeof schema.default === "function") {
-                        return _validate(schema.default(), schema.type, originalSource, path);
+                        return _validate(schema.default(), schema.type, path);
                     } else {
-                        return _validate(schema.default, schema.type, originalSource, path);
+                        return _validate(schema.default, schema.type, path);
                     }
                 } else if (schema.required) {
                     throw error;
@@ -242,16 +242,16 @@ function _validate(source: any, schema: Schema.All, originalSource: any, path: s
         }
     } else if (isSchemaArray(schema)) {
         if (!Array.isArray(source)) {
-            throw new ValidationError("incorrectType", originalSource, schema, path);
+            throw new ValidationError("incorrectType", source, schema, path);
         }
         const validated: any = [];
         for (let i = 0; i < source.length; i++) {
-            validated[i] = _validate(source[i], schema[0], originalSource, [...path, i.toString()]);
+            validated[i] = _validate(source[i], schema[0], [...path, i.toString()]);
         }
         return validated;
     } else if (isSchemaHierarchy(schema)) {
         if (typeof source !== "object" || source === null) {
-            throw new ValidationError("incorrectType", originalSource, schema, path);
+            throw new ValidationError("incorrectType", source, schema, path);
         }
         const validated: any = {};
         for (const key in schema) {
@@ -259,7 +259,7 @@ function _validate(source: any, schema: Schema.All, originalSource: any, path: s
                 if (!(key in source) && isOptional(schema[key]) && isSchemaHierarchy(schema[key])) {
                     source[key] = {};
                 }
-                validated[key] = _validate(source[key], schema[key], originalSource, [...path, key]);
+                validated[key] = _validate(source[key], schema[key], [...path, key]);
             } catch (error) {
                 if (!(error instanceof ValidationError) || !isOptional(schema[key])) {
                     throw error;
@@ -289,6 +289,7 @@ export class ValidationError extends Error {
      */
     public constructor(type: ValidationErrorType, source: any, schema: Schema.All, path: string[]) {
         super(ValidationError._buildMessage(type, source, schema, path));
+        this.name = this.constructor.name;
         this._type = type;
         this._source = source;
         this._schema = schema;
@@ -300,6 +301,19 @@ export class ValidationError extends Error {
     public get schema() { return this._schema; }
     public get data() { return this._source; }
 
+    private static _getExpected(schema: Schema.All): string {
+        if (isSchemaPrimitive(schema)) {
+            return schema;
+        } else if (isSchemaMeta(schema)) {
+            return ValidationError._getExpected(schema.type);
+        } else if (isSchemaArray(schema)) {
+            return "array";
+        } else if (isSchemaHierarchy(schema)) {
+            return "object";
+        }
+        return "unknown";
+    }
+
     private static _buildMessage(type: ValidationErrorType, data: any, schema: Schema.All, path: string[]): string {
         if (path.length === 0) {
             return `Attempted to validate ${JSON.stringify(data)}`;
@@ -308,7 +322,7 @@ export class ValidationError extends Error {
             case "missing":
                 return `Missing required field "${path.join(".")}".`;
             case "incorrectType":
-                return `Field "${path.join(".")}" has the wrong type. Expected ${JSON.stringify(schema)}, got "${typeof data}".`;
+                return `Field "${path.join(".")}" has the wrong type. Expected ${ValidationError._getExpected(schema)}, got ${JSON.stringify(data)}.`;
             default:
                 return `Validation failed. Reason: ${type}`;
         }
