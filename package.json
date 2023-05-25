@@ -1,14 +1,16 @@
 {
     "name": "@jeremy-bankes/schema",
-    "version": "4.0.5",
+    "version": "4.0.6",
     "description": "A schema module for compile-time and runtime type checking.",
     "main": "build/index.js",
     "type": "module",
     "scripts": {
         "setup": "npm i",
-        "build": "cd source && npx tsc",
-        "build:watch": "cd source && npx tsc --watch",
-        "publish": "npm run build && npm publish --access public"
+        "build": "npx tsc --build --force",
+        "clean": "rmdir /Q /S build",
+        "build:clean": "npm run clean && npm run build",
+        "build:watch": "npx tsc --watch",
+        "publish": "npm run build:clean && npm publish --access public"
     },
     "repository": {
         "type": "git",
