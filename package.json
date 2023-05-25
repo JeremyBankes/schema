@@ -1,6 +1,6 @@
 {
     "name": "@jeremy-bankes/schema",
-    "version": "4.0.6",
+    "version": "4.0.8",
     "description": "A schema module for compile-time and runtime type checking.",
     "main": "build/index.js",
     "type": "module",

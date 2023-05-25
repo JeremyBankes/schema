@@ -21,7 +21,7 @@ export interface ConversionMap {
     Date: number | bigint | string
 }
 
-type Converter<From, To extends Primitives> = (fromType: From) => To;
+export type Converter<From, To extends Primitives> = (fromType: From) => To;
 
 type ConverterMap = {
     [FromTypeKey in keyof ConversionMap]: {
@@ -67,14 +67,14 @@ export type Source<Schema extends Schema.All> = (
     never
 );
 
-type Existant<Schema extends Schema.All> = (
+export type Existant<Schema extends Schema.All> = (
     Schema extends Schema.Meta ? (Schema["required"] extends true ? true : (Schema extends { default: any } ? true : false)) :
     Schema extends Schema.Array ? Existant<Schema[0]> :
     Schema extends Schema.Hierarchy ? { [Key in keyof Schema]: Existant<Schema[Key]> } extends { [Key in keyof Schema]: false } ? false : true :
     true
 );
 
-type Optionality<Schema extends Schema.All> = (
+export type Optionality<Schema extends Schema.All> = (
     Schema extends Schema.Meta ? (Schema["required"] extends true ? (Schema extends { default: any } ? true : false) : true) :
     Schema extends Schema.Array ? Optionality<Schema[0]> :
     Schema extends Schema.Hierarchy ? { [Key in keyof Schema]: Optionality<Schema[Key]> } extends { [Key in keyof Schema]: false } ? false : true :
