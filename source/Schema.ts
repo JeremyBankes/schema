@@ -5,7 +5,7 @@ export interface PrimitiveMap {
     bigint: bigint,
     string: string,
     symbol: symbol,
-    object: object,
+    object: any,
     Date: Date
 }
 
@@ -127,7 +127,6 @@ const CONVERTERS: ConverterMap = {
 
 export function registerConverter<FromTypeName extends keyof ConversionMap, ToTypeName extends keyof PrimitiveMap>
     (fromTypeName: FromTypeName, toTypeName: ToTypeName, converter: Converter<PrimitiveMap[FromTypeName], PrimitiveMap[ToTypeName]>) {
-    // @ts-expect-error
     CONVERTERS[fromTypeName][toTypeName] = converter;
 }
 
@@ -135,28 +134,28 @@ export function registerPrimitive<TypeName extends keyof PrimitiveMap>(typeName:
     PRIMITIVES.push(typeName);
 }
 
-function isSchemaPrimitive(value: any): value is Schema.Primitive {
+export function isSchemaPrimitive(value: any): value is Schema.Primitive {
     if (typeof value !== "string") {
         return false;
     }
     return PRIMITIVES.includes(value);
 }
 
-function isSchemaMeta(value: any): value is Schema.Meta {
+export function isSchemaMeta(value: any): value is Schema.Meta {
     if (typeof value !== "object" || value === null) {
         return false;
     }
     return isSchema(value.type) && typeof value.required === "boolean";
 }
 
-function isSchemaArray(value: any): value is Schema.Array {
+export function isSchemaArray(value: any): value is Schema.Array {
     if (typeof value !== "object" || !Array.isArray(value) || value.length !== 1) {
         return false;
     }
     return isSchema(value[0]);
 }
 
-function isSchemaHierarchy(value: any): value is Schema.Hierarchy {
+export function isSchemaHierarchy(value: any): value is Schema.Hierarchy {
     if (typeof value !== "object" || value === null) {
         return false;
     }
@@ -168,11 +167,11 @@ function isSchemaHierarchy(value: any): value is Schema.Hierarchy {
     return true;
 }
 
-function isSchema(value: any): boolean {
+export function isSchema(value: any): boolean {
     return isSchemaPrimitive(value) || isSchemaMeta(value) || isSchemaArray(value) || isSchemaHierarchy(value);
 }
 
-function isOptional<Schema extends Schema.All>(schema: Schema): boolean {
+export function isOptional<Schema extends Schema.All>(schema: Schema): boolean {
     if (isSchemaPrimitive(schema)) {
         return false;
     } if (isSchemaMeta(schema)) {
