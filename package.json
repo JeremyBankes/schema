@@ -7,7 +7,7 @@
     "scripts": {
         "setup": "npm i",
         "build": "npx tsc --build --force",
-        "clean": "rmdir /Q /S build",
+        "clean": "rmdir /Q /S build 2>nul",
         "build:clean": "npm run clean && npm run build",
         "build:watch": "npx tsc --watch",
         "publish": "npm run build:clean && npm publish --access public"
