@@ -1,16 +1,16 @@
 {
     "name": "@jeremy-bankes/schema",
-    "version": "4.0.8",
+    "version": "5.0.0",
     "description": "A schema module for compile-time and runtime type checking.",
-    "main": "build/index.js",
-    "type": "module",
+    "main": "build/output/index.js",
+    "types": "build/types/index.js",
     "scripts": {
-        "setup": "npm i",
-        "build": "npx tsc --build --force",
-        "clean": "rmdir /Q /S build 2>nul",
+        "setup": "npm install",
+        "clean": "erase /F /S /Q build",
+        "build": "npx webpack",
         "build:clean": "npm run clean && npm run build",
-        "build:watch": "npx tsc --watch",
-        "publish": "npm run build:clean && npm publish --access public"
+        "build:watch": "npx webpack --watch",
+        "push": "npm run build:clean && npm publish --access public"
     },
     "repository": {
         "type": "git",
@@ -26,6 +26,13 @@
     },
     "homepage": "https://github.com/JeremyBankes/schema#readme",
     "devDependencies": {
-        "typescript": "^4.9.4"
+        "@babel/preset-env": "^7.22.4",
+        "@babel/preset-typescript": "^7.21.5",
+        "@types/node": "^20.2.5",
+        "babel-loader": "^9.1.2",
+        "nodemon": "^2.0.22",
+        "ts-loader": "^9.4.3",
+        "typescript": "^4.9.5",
+        "webpack-cli": "^5.1.1"
     }
 }
