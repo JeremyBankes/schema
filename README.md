@@ -52,7 +52,26 @@ const PersonSchema = Schema.build({
         middle: { type: "string", required: false },
         last: { type: "string", required: true }
     },
-    favoriteNumber: ["bigint" /* ← Primitive */, "or", "number"] /* ← Compound */
+    favoriteNumber: ["bigint" /* ← Primitive */, "or", "number"] /* ← Compound */,
+    age: {
+        type: ["number"],
+        required: false,
+        validate: (age: number, rawData: any) => {
+            const birthDate = Schema.validate({ type: "Date", required: false }, rawData.birthDate);
+            if (birthDate === undefined) {
+                return undefined;
+            } else {
+                const now = new Date();
+                const expectedAge = (now.getTime() - birthDate.getTime()) / 1000 / 60 / 60 / 24 / 365.25;
+                Schema.assert(Math.floor(expectedAge) === age);
+                return age;
+            }
+        }
+    },
+    birthDate: {
+        type: "Date",
+        required: false
+    },
 });
 
 const WeaponSchema = Schema.build({

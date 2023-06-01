@@ -89,7 +89,7 @@ export namespace Schema {
         }
     };
 
-    export type Validator<Type> = (value: Type) => Type;
+    export type Validator<Type> = (value: Type, data: any) => Type;
 
     export type Merge<ObjectA, ObjectB> = (
         keyof ObjectA extends never ? ObjectB :
@@ -251,12 +251,7 @@ export namespace Schema {
             return _validate(schema[0], result, path, originalSchema, originalSource, false);
         } else if (isSchemaMeta(schema)) {
             if (schema.validate !== undefined) {
-                const customValidationResult = schema.validate(source);
-                if ("message" in customValidationResult) {
-                    source = new ValidationError("failedCustomValidator", schema, source, path, originalSchema, originalSource);
-                } else {
-                    source = customValidationResult.value;
-                }
+                source = schema.validate.call(originalSource, source, originalSource);
             }
             const result = _validate(schema.type, source, path, originalSchema, originalSource);
             if (result instanceof ValidationError) {
@@ -302,11 +297,17 @@ export namespace Schema {
         }
     }
 
+    export function assert(condition: boolean, message?: string): asserts condition {
+        if (!condition) {
+            throw new Error(message);
+        }
+    }
+
     export type ValidationErrorType = "missing" | "incorrectType" | "invalidSchema" | "failedCustomValidator";
 
     export class Error extends globalThis.Error {
 
-        public constructor(message: string) {
+        public constructor(message?: string) {
             super(message);
         }
 
@@ -378,46 +379,3 @@ export namespace Schema {
     }
 
 }
-
-const person = Schema.build({
-    name: {
-        first: {
-            type: "string",
-            required: true
-        },
-        middle: {
-            type: "string",
-            required: false
-        },
-        last: {
-            type: "string",
-            required: true
-        }
-    },
-    email: {
-        type: "string",
-        required: true,
-        validate: (email: string) => {
-            if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
-                throw new Schema.Error("Your email is ugly!");
-            }
-            return email;
-        }
-    },
-    age: {
-        type: ["number", "or", "string"],
-        required: true
-    },
-    birthDate: {
-        type: "Date",
-        required: false
-    },
-    style: {
-        $: {
-            type: "string",
-            required: true
-        }
-    }
-});
-
-/** @note That conversions don't work with compounders. */
