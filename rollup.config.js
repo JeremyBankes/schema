@@ -1,4 +1,5 @@
-import typescript from '@rollup/plugin-typescript';
+import typescript from "@rollup/plugin-typescript";
+import { getBabelOutputPlugin } from "@rollup/plugin-babel";
 
 /** @type {import("rollup").RollupOptions} */
 export default {
@@ -6,9 +7,12 @@ export default {
     output: {
         file: "build/index.js",
         name: "Schema",
-        format: "umd",
+        format: "cjs",
         sourcemap: false,
         exports: "named"
     },
-    plugins: [typescript()]
+    plugins: [
+        typescript(),
+        getBabelOutputPlugin({ presets: [["@babel/preset-env", { modules: "umd" }]] })
+    ]
 };
