@@ -259,7 +259,7 @@ export namespace Schema {
                 return source.map((item) => _validate(schema, item, path, originalSchema, originalSource));
             }
             const errorType = source === undefined || source === null ? "missing" : "incorrectType";
-            throw new ValidationError(errorType, schema, source, path, originalSchema, originalSource);
+            return new ValidationError(errorType, schema, source, path, originalSchema, originalSource);
         } else if (isSchemaHierarchy(schema)) {
             if (typeof source === "object" && source !== null) {
                 const validated: any = {};
@@ -273,9 +273,9 @@ export namespace Schema {
                 return validated;
             }
             const errorType = source === undefined || source === null ? "missing" : "incorrectType";
-            throw new ValidationError(errorType, schema, source, path, originalSchema, originalSource);
+            return new ValidationError(errorType, schema, source, path, originalSchema, originalSource);
         } else {
-            throw new ValidationError("invalidSchema", schema, source, path, originalSchema, originalSource);
+            return new ValidationError("invalidSchema", schema, source, path, originalSchema, originalSource);
         }
     }
 
