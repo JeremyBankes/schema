@@ -205,6 +205,8 @@ export namespace Schema {
             return isOptional(schema.$);
         } else if (isSchemaArray(schema)) {
             return isOptional(schema[0]);
+        } else if (isSchemaOrCompound(schema) || isSchemaAndCompound(schema)) {
+            return isOptional(schema[0]) || isOptional(schema[2]);
         } else if (isSchemaHierarchy(schema)) {
             for (const key in schema) {
                 if (!isOptional(schema[key])) {
@@ -213,7 +215,7 @@ export namespace Schema {
             }
             return true;
         } else {
-            throw new Error("Invalid schema.");
+            throw new Schema.Error("Invalid schema.");
         }
     }
 
@@ -259,7 +261,7 @@ export namespace Schema {
                     if (typeof schema.default === "function") {
                         return _validate(schema.type, schema.default(), path, originalSchema, originalSource);
                     } else {
-                        return _validate(schema.default, source, path, originalSchema, originalSource);
+                        return _validate(schema.type, schema.default, path, originalSchema, originalSource);
                     }
                 } else if (schema.required) {
                     return result;
@@ -299,7 +301,7 @@ export namespace Schema {
 
     export function assert(condition: boolean, message?: string): asserts condition {
         if (!condition) {
-            throw new Error(message);
+            throw new Schema.Error(message);
         }
     }
 
