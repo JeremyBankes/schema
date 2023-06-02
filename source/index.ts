@@ -196,29 +196,6 @@ export namespace Schema {
         return typeof value === "object" ? value.constructor.name : typeof value;
     }
 
-    export function isOptional<Schema extends Schema.Any>(schema: Schema): boolean {
-        if (isSchemaPrimitive(schema)) {
-            return false;
-        } if (isSchemaMeta(schema)) {
-            return !schema.required || "default" in schema;
-        } else if (isSchemaDynamic(schema)) {
-            return isOptional(schema.$);
-        } else if (isSchemaArray(schema)) {
-            return isOptional(schema[0]);
-        } else if (isSchemaOrCompound(schema) || isSchemaAndCompound(schema)) {
-            return isOptional(schema[0]) || isOptional(schema[2]);
-        } else if (isSchemaHierarchy(schema)) {
-            for (const key in schema) {
-                if (!isOptional(schema[key])) {
-                    return false;
-                }
-            }
-            return true;
-        } else {
-            throw new Schema.Error("Invalid schema.");
-        }
-    }
-
     export function build<Schema extends Schema.Any>(schema: Schema): Schema {
         return schema;
     }
@@ -241,7 +218,8 @@ export namespace Schema {
             } else if (convert && sourceType in converters && schema in converters[sourceType as keyof ConverterMap]) {
                 return (<Converter<any, any>>converters[sourceType as keyof ConverterMap][schema])(source);
             }
-            return new ValidationError("incorrectType", schema, source, path, originalSchema, originalSource);
+            const errorType = source === undefined || source === null ? "missing" : "incorrectType";
+            return new ValidationError(errorType, schema, source, path, originalSchema, originalSource);
         } else if (isSchemaOrCompound(schema)) {
             const result = _validate(schema[0], source, path, originalSchema, originalSource, false);
             if (result instanceof ValidationError) {
@@ -280,7 +258,8 @@ export namespace Schema {
                 [schema] = schema;
                 return source.map((item) => _validate(schema, item, path, originalSchema, originalSource));
             }
-            throw new ValidationError("incorrectType", schema, source, path, originalSchema, originalSource);
+            const errorType = source === undefined || source === null ? "missing" : "incorrectType";
+            throw new ValidationError(errorType, schema, source, path, originalSchema, originalSource);
         } else if (isSchemaHierarchy(schema)) {
             if (typeof source === "object" && source !== null) {
                 const validated: any = {};
@@ -293,7 +272,8 @@ export namespace Schema {
                 }
                 return validated;
             }
-            throw new ValidationError("incorrectType", schema, source, path, originalSchema, originalSource);
+            const errorType = source === undefined || source === null ? "missing" : "incorrectType";
+            throw new ValidationError(errorType, schema, source, path, originalSchema, originalSource);
         } else {
             throw new ValidationError("invalidSchema", schema, source, path, originalSchema, originalSource);
         }
@@ -359,7 +339,7 @@ export namespace Schema {
             switch (type) {
                 case "missing":
                     return path.length === 0 ?
-                        `Attempted to validate ${sourceRepresentation} as ${ValidationError.getExpectedString(schema)}.` :
+                        `Attempted to validate "${sourceRepresentation}" as ${ValidationError.getExpectedString(schema)}.` :
                         `Missing required field "${path.join(".")}".`;
                 case "incorrectType":
                     return (
