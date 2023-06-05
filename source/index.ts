@@ -211,7 +211,7 @@ export namespace Schema {
     function _validate(schema: any, source: any, path: string[], originalSchema: any, originalSource: any, convert: boolean = true): any {
         if (isSchemaPrimitive(schema)) {
             const sourceType = getType(source);
-            if (sourceType === schema) {
+            if (sourceType === schema || schema === "any") {
                 return source;
             } else if (sourceType === "object" && source !== null && source.constructor.name === schema) {
                 return source;
