@@ -193,7 +193,7 @@ export namespace Schema {
     }
 
     export function getType(value: any): string {
-        return typeof value === "object" ? value.constructor.name : typeof value;
+        return typeof value === "object" ? value === null ? "null" : value.constructor.name : typeof value;
     }
 
     export function build<Schema extends Schema.Any>(schema: Schema): Schema {
