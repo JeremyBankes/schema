@@ -235,7 +235,7 @@ export namespace Schema {
                     source = schema.validate.call(originalSource, source, originalSource);
                 } catch (error) {
                     if (error instanceof Schema.Error) {
-                        throw new ValidationError("failedCustomValidator", schema, source, path, originalSchema, originalSource);
+                        throw new ValidationError("failedCustomValidator", schema, source, path, originalSchema, originalSource, error.message);
                     } else {
                         throw error;
                     }
@@ -311,6 +311,7 @@ export namespace Schema {
         public readonly originalSource: any;
         public readonly originalSchema: Schema.Any;
         public readonly path: string[];
+        public readonly customMessage?: string;
 
         /**
          * @param message The error message.
@@ -318,7 +319,7 @@ export namespace Schema {
          * @param source The data that failed validation.
          * @param path The path to the value that failed validation.
          */
-        public constructor(type: ValidationErrorType, schema: Schema.Any, source: any, path: string[], originalSchema: Schema.Any, originalSource: any) {
+        public constructor(type: ValidationErrorType, schema: Schema.Any, source: any, path: string[], originalSchema: Schema.Any, originalSource: any, customMessage?: string) {
             super(ValidationError.getMessage(type, source, schema, path));
             this.name = this.constructor.name;
             this.type = type;
@@ -327,6 +328,7 @@ export namespace Schema {
             this.originalSource = originalSource;
             this.originalSchema = originalSchema;
             this.path = path;
+            this.customMessage = customMessage;
         }
 
         public static getExpectedString(schema: Schema.Any): string {
