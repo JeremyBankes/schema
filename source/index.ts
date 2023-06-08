@@ -231,7 +231,15 @@ export namespace Schema {
             return _validate(schema[0], result, path, originalSchema, originalSource, false);
         } else if (isSchemaMeta(schema)) {
             if (schema.validate !== undefined) {
-                source = schema.validate.call(originalSource, source, originalSource);
+                try {
+                    source = schema.validate.call(originalSource, source, originalSource);
+                } catch (error) {
+                    if (error instanceof Schema.Error) {
+                        throw new ValidationError("failedCustomValidator", schema, source, path, originalSchema, originalSource);
+                    } else {
+                        throw error;
+                    }
+                }
             }
             const result = _validate(schema.type, source, path, originalSchema, originalSource);
             if (result instanceof ValidationError) {

@@ -54,7 +54,7 @@ const PersonSchema = Schema.build({
     },
     favoriteNumber: ["bigint" /* ← Primitive */, "or", "number"] /* ← Compound */,
     age: {
-        type: ["number"],
+        type: "number",
         required: false,
         validate: (age: number, rawData: any) => {
             const birthDate = Schema.validate({ type: "Date", required: false }, rawData.birthDate);
@@ -71,7 +71,7 @@ const PersonSchema = Schema.build({
     birthDate: {
         type: "Date",
         required: false
-    },
+    }
 });
 
 const WeaponSchema = Schema.build({
