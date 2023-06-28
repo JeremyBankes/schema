@@ -241,7 +241,20 @@ export namespace Schema {
                     }
                 }
             }
-            return _validate(schema.type, source, path, originalSchema, originalSource);
+            const result = _validate(schema.type, source, path, originalSchema, originalSource);
+            if (result instanceof ValidationError && result.type === "missing") {
+                if ("default" in schema) {
+                    if (typeof schema.default === "function") {
+                        return _validate(schema.type, schema.default(), path, originalSchema, originalSource);
+                    } else {
+                        return _validate(schema.type, schema.default, path, originalSchema, originalSource);
+                    }
+                } else if (schema.required) {
+                    return result;
+                }
+                return undefined;
+            }
+            return result;
         } else if (isSchemaDynamic(schema)) {
             const validated: any = {};
             for (const key in source) {
