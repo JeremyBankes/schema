@@ -111,8 +111,8 @@ export namespace Schema {
         [Schema] extends [Dynamic] ? { [Key: string]: Model<Schema["$"]> } :
         [Schema] extends [Array] ? Model<Schema[0]>[] :
         [Schema] extends [Hierarchy] ? Merge<
-            { [Key in keyof Schema as Existant<Schema[Key]> extends true ? Key : never]: Model<Schema[Key]> },
-            { [Key in keyof Schema as Existant<Schema[Key]> extends true ? never : Key]?: Model<Schema[Key]> }
+            { [Key in keyof Schema as Existent<Schema[Key]> extends true ? Key : never]: Model<Schema[Key]> },
+            { [Key in keyof Schema as Existent<Schema[Key]> extends true ? never : Key]?: Model<Schema[Key]> }
         > :
         never
     );
@@ -131,9 +131,9 @@ export namespace Schema {
         never
     );
 
-    export type Existant<Schema extends Schema.Any> = (
+    export type Existent<Schema extends Schema.Any> = (
         Schema extends Schema.Meta ? (Schema["required"] extends true ? true : (Schema extends { default: any } ? true : false)) :
-        Schema extends Schema.Array ? Existant<Schema[0]> :
+        Schema extends Schema.Array ? Existent<Schema[0]> :
         true
     );
 
@@ -241,20 +241,7 @@ export namespace Schema {
                     }
                 }
             }
-            const result = _validate(schema.type, source, path, originalSchema, originalSource);
-            if (result instanceof ValidationError) {
-                if ("default" in schema) {
-                    if (typeof schema.default === "function") {
-                        return _validate(schema.type, schema.default(), path, originalSchema, originalSource);
-                    } else {
-                        return _validate(schema.type, schema.default, path, originalSchema, originalSource);
-                    }
-                } else if (schema.required) {
-                    return result;
-                }
-                return undefined;
-            }
-            return result;
+            return _validate(schema.type, source, path, originalSchema, originalSource);
         } else if (isSchemaDynamic(schema)) {
             const validated: any = {};
             for (const key in source) {
