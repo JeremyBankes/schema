@@ -114,7 +114,7 @@ export namespace Schema {
             { [Key in keyof Schema as Existent<Schema[Key]> extends true ? Key : never]: Model<Schema[Key]> },
             { [Key in keyof Schema as Existent<Schema[Key]> extends true ? never : Key]?: Model<Schema[Key]> }
         > :
-        never
+        any
     );
 
     export type Source<Schema extends Schema.Any> = (
@@ -128,7 +128,7 @@ export namespace Schema {
             { [Key in keyof Schema as Optionality<Schema[Key]> extends true ? never : Key]: Source<Schema[Key]> },
             { [Key in keyof Schema as Optionality<Schema[Key]> extends true ? Key : never]?: Source<Schema[Key]> }
         > :
-        never
+        any
     );
 
     export type Existent<Schema extends Schema.Any> = (
