@@ -145,6 +145,9 @@ export namespace Schema {
 
     export function registerConverter<FromTypeName extends keyof ConversionMap, ToTypeName extends keyof Map>
         (fromTypeName: FromTypeName, toTypeName: ToTypeName, converter: Converter<Map[FromTypeName], Map[ToTypeName]>) {
+        if (!(fromTypeName in converters)) {
+            converters[fromTypeName] = {};
+        }
         converters[fromTypeName][toTypeName] = converter;
     }
 
@@ -258,13 +261,25 @@ export namespace Schema {
         } else if (isSchemaDynamic(schema)) {
             const validated: any = {};
             for (const key in source) {
-                validated[key] = _validate(schema.$, source[key], path, originalSchema, originalSource) as never;
+                const result = _validate(schema.$, source[key], path, originalSchema, originalSource);
+                if (result instanceof ValidationError) {
+                    return result;
+                }
+                validated[key] = result;
             }
             return validated;
         } else if (isSchemaArray(schema)) {
             if (Array.isArray(source)) {
                 [schema] = schema;
-                return source.map((item) => _validate(schema, item, path, originalSchema, originalSource));
+                const validated: any = [];
+                for (let i = 0; i < source.length; i++) {
+                    const result = _validate(schema, source[i], path, originalSchema, originalSource);
+                    if (result instanceof ValidationError) {
+                        return result;
+                    }
+                    validated[i] = result;
+                }
+                return validated;
             }
             const errorType = source === undefined || source === null ? "missing" : "incorrectType";
             return new ValidationError(errorType, schema, source, path, originalSchema, originalSource);
