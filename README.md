@@ -1,5 +1,8 @@
 # Schema
----
+
+|⚠️| This project has been deprecated in favour of [Lucania/Lux](https://github.com/lucania-software/schema) |
+|-|-|
+
 | TECHNICAL | |
 |:-:|-|
 | _noun_ | _a representation of a plan or theory in the form of an outline or model._|
