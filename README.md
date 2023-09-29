@@ -1,6 +1,6 @@
 # Schema
 
-|⚠️| This project has been deprecated in favour of [Lucania/Lux](https://github.com/lucania-software/schema) |
+|⚠️| This project has been deprecated in favour of [Lucania/Schema](https://github.com/lucania-software/schema) |
 |-|-|
 
 | TECHNICAL | |
